@@ -1,0 +1,243 @@
+#Landing-Content-Container{
+        position: absolute;
+        top: 80%;
+        /* width: 50%; */
+        height: 175%;
+        border-radius: 20px;
+        background-size: cover;
+        background-position: center;
+        color: white;
+        margin: 2% 2% 2% 2%;
+        padding: 0;
+}
+
+.WhyInfer{
+    /* position: absolute; */
+    /* top: 68%; */
+    left: 0;
+    font-family: Manrope;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 55.44px;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: #010101;
+    /* margin-top: 5%; */
+    margin-bottom: 5%;
+}
+
+.WhyInfer-points{
+    /* position: absolute; */
+    top: 96%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 800px;
+    width: 50%;
+    margin-top: 5%;
+    margin: auto;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.number {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+}
+
+.number span {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+.card-title {
+    /* font-size: 18px;
+    margin-bottom: 10px; */
+    color: #1A1A1A;
+    font-family: Manrope;
+font-size: 20px;
+font-weight: 600;
+line-height: 31.2px;
+text-align: center;
+
+}
+
+.card-content {
+    font-size: 14px;
+    color: #1A1A1A;
+    line-height: 1.6;
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 23.36px;
+    letter-spacing: 0.02em;
+    text-align: center;
+
+}
+
+.number-1{
+    background-color: #e1f0f7;
+}
+.number-2{
+    background-color: #f7f3e1;
+}
+.number-3{
+    background-color: #f7e1e1;
+}
+.number-4{
+    background-color: #e1f7e4;
+}
+
+.faq-container {
+
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 10%;
+    color: black;
+}
+
+.faq-header {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #010101;
+    font-family: Manrope;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 55.44px;
+    letter-spacing: -0.01em;
+    text-align: center;
+
+}
+
+.faq {
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.faq-item {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* .faq-item:hover {
+    background-color: #f0f0f0;
+} */
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: fit-content;
+}
+
+.faq-number {
+    background-color: #ffff;
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: bold;
+    color: #010101;
+    width: Fixed (42px)px;
+    border: 1px solid;
+
+}
+
+#faq-number-h3 {
+    flex: 1;
+    margin: 0;
+    padding: 0 15px;
+    font-family: Manrope;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 29.2px;
+    letter-spacing: 0.02em;
+    text-align: center;
+
+}
+
+.toggle-icon {  
+    position: absolute;
+    left: 70%;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.faq-answer {
+    margin-top: 10px;
+    padding-left: 45px;
+    display: none;
+    width: fit-content;
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 23.36px;
+    letter-spacing: 0.02em;
+    text-align: left;
+
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+.Landing-footer{
+    /* width: Fixed (1,348px)px;
+    height: Hug (60px)px; */
+    top: 2121px;
+    left: 26px;
+    padding: 16px 32px 16px 32px;
+    gap: 0px;
+    justify: space-between;
+    opacity: 0px;
+}
+.footer-content{
+    background: linear-gradient(90deg, #318FFF -20.96%, #FA1AFF 179.64%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: auto;
+    border-radius: 12px;
+}.social-icons a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.social-icons a:hover {
+    color: #e0e0e0;
+}
+.footer-trademark{
+    margin: 1%;
+    font-family: Manrope;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19.12px;
+    text-align: left;
+
+}
