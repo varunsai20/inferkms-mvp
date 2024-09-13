@@ -8,6 +8,7 @@ const SearchHeader = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filteredResults, setFilteredResults] = useState(terms);
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -16,23 +17,21 @@ const SearchHeader = () => {
       const storedSearchTerm = sessionStorage.getItem('SearchTerm');
       if (storedSearchTerm) {
         setSearchTerm(storedSearchTerm);
-        handleSearch(null, storedSearchTerm); // Populate suggestions based on the stored term
+        handleInputChange(null, storedSearchTerm); // Populate suggestions based on the stored term
       }
     } else {
       // Clear session storage when not on the search page
       sessionStorage.removeItem('SearchTerm');
     }
   }, [location.pathname]);
-  const handleSearch = (event, value) => {
+  const handleInputChange = (event, value) => {
     setSearchTerm(value);
-    if (value) {
-      const filteredResults = terms.filter((term) =>
-        term.toLowerCase().includes(value.toLowerCase())
-      );
-      setResults(filteredResults);
-    } else {
-      setResults([]);
-    }
+
+    // Filter results dynamically
+    const results = terms.filter((term) =>
+      term.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredResults(results);
   };
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -75,7 +74,7 @@ const SearchHeader = () => {
         <div className='Search-Nav-Items'>
             <img className="Search-nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
             <section className='Search-nav-links'>
-              <a className="Search-navlink" href="#">Home</a>
+              <a className="Search-navlink" href="/">Home</a>
               <a className="Search-navlink" href="#WhyInfer">Why Infer?</a>
               <a className="Search-navlink" href="#FAQ">FAQs</a>
             </section>
@@ -89,8 +88,8 @@ const SearchHeader = () => {
         <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">
             <Autocomplete
                         freeSolo
-                        options={results}
-                        onInputChange={handleSearch}
+                        options={filteredResults}
+                        onInputChange={handleInputChange}
                         inputValue={searchTerm}
                         renderInput={(params) => (
                             <>

@@ -20,27 +20,27 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     publicationDate: '',
   });
 
-  const handleFilterChange = (event) => {
-    const { name, value, checked } = event.target;
-    if (name === 'articleType') {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        articleType: checked
-          ? [...prevFilters.articleType, value]
-          : prevFilters.articleType.filter((type) => type !== value),
-      }));
-    } else {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [name]: value,
-      }));
-    }
-  };
+  // const handleFilterChange = (event) => {
+  //   const { name, value, checked } = event.target;
+  //   if (name === 'articleType') {
+  //     setFilters((prevFilters) => ({
+  //       ...prevFilters,
+  //       articleType: checked
+  //         ? [...prevFilters.articleType, value]
+  //         : prevFilters.articleType.filter((type) => type !== value),
+  //     }));
+  //   } else {
+  //     setFilters((prevFilters) => ({
+  //       ...prevFilters,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
 
-  const handleApplyFilters = () => {
-    applyFilters(filters);
-    onClose();
-  };
+  // const handleApplyFilters = () => {
+  //   applyFilters(filters);
+  //   onClose();
+  // };
 
   useEffect(() => {
     // Clear session storage for chatHistory when the location changes

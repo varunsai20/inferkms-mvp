@@ -9,32 +9,32 @@ const LandingHeader = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filteredResults, setFilteredResults] = useState(terms);
   const navigate = useNavigate();
   const location = useLocation();
-  useEffect(() => {
-    if (location.pathname === "/search") {
-      // Check if searchTerm is present in sessionStorage
-      const storedSearchTerm = sessionStorage.getItem('SearchTerm');
-      if (storedSearchTerm) {
-        setSearchTerm(storedSearchTerm);
-        handleSearch(null, storedSearchTerm); // Populate suggestions based on the stored term
-      }
-    } else {
-      // Clear session storage when not on the search page
-      sessionStorage.removeItem('SearchTerm');
-    }
-  }, [location.pathname]);
-  const handleSearch = (event, value) => {
+  // useEffect(() => {
+  //   if (location.pathname === "/search") {
+  //     // Check if searchTerm is present in sessionStorage
+  //     const storedSearchTerm = sessionStorage.getItem('SearchTerm');
+  //     if (storedSearchTerm) {
+  //       setSearchTerm(storedSearchTerm);
+  //       handleSearch(null, storedSearchTerm); // Populate suggestions based on the stored term
+  //     }
+  //   } else {
+  //     // Clear session storage when not on the search page
+  //     sessionStorage.removeItem('SearchTerm');
+  //   }
+  // }, [location.pathname]);
+  const handleInputChange = (event, value) => {
     setSearchTerm(value);
-    if (value) {
-      const filteredResults = terms.filter((term) =>
-        term.toLowerCase().includes(value.toLowerCase())
-      );
-      setResults(filteredResults);
-    } else {
-      setResults([]);
-    }
+
+    // Filter results dynamically
+    const results = terms.filter((term) =>
+      term.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredResults(results);
   };
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleButtonClick();
@@ -94,9 +94,9 @@ const LandingHeader = () => {
                 <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">
                     <Autocomplete
                         freeSolo
-                        options={results}
+                        options={filteredResults}
                         // open // Keeps the suggestions always visible
-                        onInputChange={handleSearch}
+                        onInputChange={handleInputChange}
                         inputValue={searchTerm}
                         renderInput={(params) => (
                             <>
