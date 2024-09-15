@@ -35,11 +35,11 @@ const LandingHeader = () => {
     setFilteredResults(results);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      handleButtonClick();
-    }
-  };
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        handleButtonClick();
+      }
+    };
   const handleButtonClick = () => {
     if (searchTerm) {
       setLoading(true);
@@ -91,7 +91,7 @@ const LandingHeader = () => {
               <h3 className='searchbar-header'>Welcome to Infer</h3>
             </div>
             <div className='searchbar-outer'>
-                <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">
+                <Box id="LandinhHeader-searchbar-box" display="flex" justifyContent="center" width="100%">
                     <Autocomplete
                         freeSolo
                         options={filteredResults}
@@ -111,11 +111,11 @@ const LandingHeader = () => {
                                     variant="outlined"
                                     fullWidth
                                     onKeyDown={handleKeyDown}
-                                    id="custom-textfield"
+                                    id="LandingHeader-custom-textfield"
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: { paddingLeft: '40px', background: "#fff", borderRadius: '54px',fontFamily: "Manrope !important",
+                                        style: { padding: '8px 8px 8px 40px', borderRadius:"54px 0 0 54px ", background: "#fff",fontFamily: "Manrope !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}
@@ -123,13 +123,14 @@ const LandingHeader = () => {
                                         style: { left: '30px' },
                                     }}
                                 />
-                                <Button variant="contained" className="MuiButtonBase-root" id="search-button" onClick={handleButtonClick} disabled={loading}>
-                                {loading ? <CircularProgress background={"white"} size={24} /> : 'Search'}
-                    </Button>
+                                
                             </>
                         )}
                         className="autocomplete"
                     />
+                    <Button variant="contained" className="MuiButtonBase-root" id="search-button" onClick={handleButtonClick} disabled={loading}>
+                                {loading ? <CircularProgress background={"white"} size={24} /> : 'Search'}
+                    </Button>
                     
                 </Box>
                 <svg className="icon-searchbarBackdrop" width="20%" height="50%" viewBox="0 0 126 119" fill="none" xmlns="http://www.w3.org/2000/svg">

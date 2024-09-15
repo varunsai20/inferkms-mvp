@@ -77,7 +77,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // Calculate the index range for articles to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedArticles = data.articles.slice(startIndex, endIndex);
+  // const paginatedArticles = data.articles.slice(startIndex, endIndex);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -91,7 +91,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
 
   return (
     <>
-    <Container maxWidth="xl" id=''>
+    <Container maxWidth="xl" id='Search-Content-ContainerBox'>
         <div id='Search-Content-Container'>
         <div className='searchContent-left'>
             <h3 className="title">Similar results</h3>
@@ -143,9 +143,9 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
             </div>
             <div className='searchContent-articles'>
               <div className="searchresults-list">
-                {paginatedArticles.map((result, index) => (
+                {data.articles.map((result, index) => (
                   <div key={index} className="searchresult-item">
-                    <h3 className="searchresult-title" onClick={() => handleNavigate(result.PMID)}>
+                    <h3 className="searchresult-title"onClick={() => handleNavigate(result.PMID)}>
                       <input type="checkbox" className="result-checkbox" />
                       {italicizeTerm(result.TITLE)}
                     </h3>

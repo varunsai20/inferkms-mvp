@@ -1,3 +1,11 @@
+#Search-Content-ContainerBox{
+  position: absolute;
+    top: 35%;
+    width: 96%;
+    /* height: 20vh; */
+    border-radius: 20px;
+}
+
 #Search-Content-Container{
     display: flex;
     /* position: absolute; */
@@ -9,7 +17,7 @@
     background-position: center;
     color: white;
     margin: 2% 2% 2% 2%;
-    margin-top: 30%;
+    /* margin-top: 30%; */
     padding: 0;
 }
 .searchContent-left {

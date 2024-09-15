@@ -83,6 +83,20 @@ margin: auto;
     /* margin-top: 5%; */
 }
 
+#LandinhHeader-searchbar-box{
+    position: absolute;
+    height: 7vh;
+    width: 75%;
+    margin: auto;
+    left: 12%;
+    top: 20%;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 54px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
 .searchbar-divHeader{
     margin: auto;
     font-family: Manrope;
@@ -113,20 +127,20 @@ margin-bottom: 0;
 
 .autocomplete{
     position: absolute;
-    top: 15%;
-    width: 75%;
-    left: 8%;
-    height: 46px;
+    /* top: 15%; */
+    width: 87%;
+    /* left: 8%; */
+    height: 7vh;
     border: 0;
     gap: 0px;
-    border-radius: 47px;
+    border-radius: 54px 0 0 54px;
     justify: space-between;
     opacity: 100%;
     color: black;
-    padding-left: 5%;
+    /* padding-left: 5%; */
     
 }
-#custom-textfield .MuiInputBase-input {
+#LandingHeader-custom-textfield .MuiInputBase-input {
     padding-left: 30px; /* Adjust this value to increase padding */
   }
 .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment{
@@ -176,16 +190,16 @@ margin-bottom: 0;
   }
 .icon{
     position: absolute;
-    left: 8%;
-    top: 35%;
+    left: 2%;
+    top: 30%;
     z-index: 1;
     color: black;
 }
 
 #search-button{
     position: absolute;
-    left: 86%;
-    top: 19%;
+    left: 87.5%;
+    top: 15%;
     z-index: 1;
     color: #FFFFFF;
     width: 12%;
