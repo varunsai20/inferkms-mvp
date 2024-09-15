@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import SearchResults from './Pages/searchResult/searchResults';
 import ArticlePage from './Pages/Article Page/ArticlePage';
 import ArticleContent from './Pages/Article Page/Components/ArticleContent';
-import ArticleQurey from './Pages/Article Page/Components/ArticleQurey';
 
 
 function App() {
@@ -14,9 +13,9 @@ function App() {
     <div className="App">
       <header className="App-header">
       <Routes>
-        <Route path="/" element={<ArticleQurey/>} />
+        <Route path="/" element={<LandingPage/>} />
         <Route path="/search" element={<SearchResults/>} />
-        <Route path="/article/:pmid" element={<ArticleQurey/>} />
+        <Route path="/article/:pmid" element={<ArticlePage/>} />
         </Routes>
       </header>
     </div>

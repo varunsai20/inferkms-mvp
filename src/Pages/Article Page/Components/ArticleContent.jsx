@@ -5,8 +5,11 @@ import { Container, Typography, Paper, Box, Grid } from '@mui/material';
 import flag from "../../../images/flash.svg";
 import Arrow from "../../../images/Arrow-left.svg";
 import { useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import { CircularProgress } from "@mui/material";
 
 const ArticleContent = () => {
+
   const { pmid } = useParams(); // Get the PMID from the URL
   const location = useLocation(); // Access the passed state
   const { data } = location.state || { data: [] }; // Default to an empty array if no data
@@ -57,7 +60,7 @@ const ArticleContent = () => {
 
     const bodyData = JSON.stringify({
       question: query,
-      pmid: 29493979,
+      pmid: pmid,
     });
 
     fetch("http://13.127.207.184:80/generateanswer", {
@@ -69,7 +72,7 @@ const ArticleContent = () => {
     }).then((response) => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-
+      setQuery()
       const readStream = () => {
         reader.read().then(({ done, value }) => {
           if (done) {
@@ -77,26 +80,33 @@ const ArticleContent = () => {
             sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
             return;
           }
-
+      
           const chunk = decoder.decode(value, { stream: true });
-          const jsonChunk = JSON.parse(chunk);
-          const answer = jsonChunk.answer;
-
-          setResponse(answer);
-          setChatHistory((prevChatHistory) => {
-            const updatedChatHistory = [...prevChatHistory];
-            updatedChatHistory[updatedChatHistory.length - 1].response +=
-              answer;
-            return updatedChatHistory;
-          });
-
-          if (endOfMessagesRef.current) {
-            endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+      
+          try {
+            // Try parsing the chunk as JSON
+            const jsonChunk = JSON.parse(chunk);
+            const answer = jsonChunk.answer;
+      
+            setResponse(answer);
+            setChatHistory((prevChatHistory) => {
+              const updatedChatHistory = [...prevChatHistory];
+              updatedChatHistory[updatedChatHistory.length - 1].response += answer;
+              return updatedChatHistory;
+            });
+      
+            if (endOfMessagesRef.current) {
+              endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
+            console.log("Chunk content:", chunk); // Log the chunk to inspect the content
           }
-
+      
           readStream();
         });
       };
+      
 
       readStream();
     });
@@ -115,7 +125,7 @@ const ArticleContent = () => {
   const navigate = useNavigate(); // useNavigate hook for programmatic navigation
 
   const handleBackClick = () => {
-    navigate("/searchpage"); // Navigate to the search page
+    navigate("/search"); // Navigate to the search page
   };
 
   const italicizeTerm = (text) => {
@@ -273,8 +283,63 @@ const ArticleContent = () => {
             <p>Data not found for the given PMID</p>
           </div>
         )}
+        
       </div>
+      
       </div>
+      {showStreamingSection && (
+        <div className="streaming-section">
+          <div className="history-pagination">
+            <h5>History</h5>
+            <ul>
+              {history.map((item, index) => (
+                <li key={index}>{item.slice(0, 20)}...</li>
+              ))}
+            </ul>
+          </div>
+          <div className="streaming-content">
+            
+            {chatHistory.map((chat, index) => (
+              <div key={index}>
+                <div className="query-asked">
+                  <span>{chat.query}</span>
+                </div>
+                <div className="response" style={{ textAlign: "left" }}>
+                  {/* <span>{chat.response}</span> */}
+                  <ReactMarkdown>{chat.response}</ReactMarkdown>
+                </div>
+              </div>
+            ))}
+            
+            <div className="stream-input">
+              <img src={flag} alt="flag-logo" className="stream-flag-logo" />
+              <input
+                type="text"
+                placeholder="Ask anything..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <button onClick={handleAskClick}>
+                {loading ? <CircularProgress size={24} color="white" /> : "Ask"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {chatInput && (
+        <div className="chat-input">
+          <img src={flag} alt="flag-logo" className="flag-logo" />
+          <input
+            type="text"
+            placeholder="Ask anything..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <button onClick={handleAskClick}>Ask</button>
+        </div>
+      )}
     </div>
   );
 };
