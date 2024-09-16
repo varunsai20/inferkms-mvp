@@ -86,18 +86,18 @@ const SearchHeader = () => {
       </div>
       <div className='searchHeader-container'>
         <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">        
-            <Autocomplete
+        <Autocomplete
                         freeSolo
                         options={filteredResults}
+                        //open // Keeps the suggestions always visible
                         onInputChange={handleInputChange}
                         inputValue={searchTerm}
                         renderInput={(params) => (
                             <>
-                            <svg className="fas fa-search searchHeader-searchicon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="fas fa-search icon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="10.3054" cy="10.3054" r="7.49047" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M15.5151 15.9043L18.4518 18.8334" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
-                                
 
                                 <TextField
                                     {...params}
@@ -105,11 +105,11 @@ const SearchHeader = () => {
                                     variant="outlined"
                                     fullWidth
                                     onKeyDown={handleKeyDown}
-                                    id="custom-textfield"
+                                    id="LandingHeader-custom-textfield"
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: {  paddingLeft: '40px',borderRadius:"54px 0 0 54px ",background: "#fff",height:"7vh",fontFamily: "Manrope !important",
+                                        style: { padding: '8px 80px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}
@@ -118,16 +118,28 @@ const SearchHeader = () => {
                                     }}
                                 />
                                 
-                                 </>
+
+                                
+                            </>
                         )}
                         className="searchHeader-autocomplete"
-                    />  
-                      <select id="cars" className="searchHeader-dropdown" name="cars">
-                                      <option value="volvo">BestSearch</option>
-                                      <option value="saab">Abstarct</option>
-                                      <option value="mercedes">Articles</option>
-                                      <option value="audi">Books</option>
-                      </select> 
+                        
+                    />
+                    <div className='searchHeader-dropdown-div'>
+                    {loading ? <>
+                                  
+                                  <CircularProgress className="searchLoader" color="secondary" background={"white"} size={24}/> 
+                               </> : <>
+                               <select id="cars" className="searchHeader-dropdown" name="cars">
+                               <option value="volvo">BestSearch</option>
+                              <option value="saab">Abstarct</option>
+                               <option value="mercedes">Articles</option>
+                              <option value="audi">Books</option>
+                                  </select> 
+                                      </>}        
+                    </div>
+                             
+                      
         </Box>
       </div>
     </Container>

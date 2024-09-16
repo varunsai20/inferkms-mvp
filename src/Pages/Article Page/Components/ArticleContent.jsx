@@ -125,8 +125,7 @@ const ArticleContent = () => {
   const navigate = useNavigate(); // useNavigate hook for programmatic navigation
 
   const handleBackClick = () => {
-    navigate("/search"); // Navigate to the search page
-  };
+    navigate("/search", { state: { data, searchTerm } });  };
 
   const italicizeTerm = (text) => {
     if (!searchTerm) return text;

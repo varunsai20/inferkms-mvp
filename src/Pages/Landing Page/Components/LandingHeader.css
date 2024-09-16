@@ -90,8 +90,8 @@ margin: auto;
     margin: auto;
     left: 12%;
     top: 20%;
-    background: #fff;
-    border: 1px solid black;
+    /* background: #fff; */
+    /* border: 1px solid black; */
     border-radius: 54px;
     display: flex;
     flex-direction: row;
@@ -128,9 +128,9 @@ margin-bottom: 0;
 .autocomplete{
     position: absolute;
     /* top: 15%; */
-    width: 87%;
+    width: 100%;
     /* left: 8%; */
-    height: 7vh;
+    /* height: 7vh; */
     border: 0;
     gap: 0px;
     border-radius: 54px 0 0 54px;
@@ -198,7 +198,7 @@ margin-bottom: 0;
 
 #search-button{
     position: absolute;
-    left: 87.5%;
+    right: 1%;
     top: 15%;
     z-index: 1;
     color: #FFFFFF;

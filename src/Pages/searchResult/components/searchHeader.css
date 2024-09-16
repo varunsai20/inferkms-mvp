@@ -102,8 +102,8 @@ display: flow;
     margin: auto;
     left: 12%;
     top: 20%;
-    background: #fff;
-    border: 1px solid black;
+    /* background: #fff;
+    border: 1px solid black; */
     border-radius: 54px;
     display: flex;
     flex-direction: row;
@@ -151,7 +151,7 @@ display: flow;
     position: absolute;
     /* left: 7.5%; */
     /* top: 0%; */
-    width: 82%;
+    width: 100%;
     height: 7vh;
     display: flex;
     align-items: center;
@@ -160,17 +160,27 @@ display: flow;
     margin: auto;
 }
 .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment{
-    margin-right: 3% !important;
+    margin-right: 17% !important;
 }
-.searchHeader-dropdown{
+.searchHeader-dropdown-div{
     position: absolute;
     width: 18%;
     right: 0%;
     top: 0%;
     height: 7vh;
+}
+.searchHeader-dropdown{
+    position: absolute;
+    width: 100%;
+    right: 0%;
+    top: 0%;
+    height: 7vh;
     border: none;
     background: inherit;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
     outline:none;
     border-radius: 0 54px 54px 0;
+}
+.searchLoader{
+    margin-top: 15px;
 }
