@@ -15,7 +15,6 @@ const ArticleContent = () => {
   const searchTerm = location.state?.SEARCHTERM || "";
   const [articleData, setArticleData] = useState(null);
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("Title");
   const [query, setQuery] = useState(""); // Initialize with empty string
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(true);
@@ -25,11 +24,8 @@ const ArticleContent = () => {
     return storedHistory ? JSON.parse(storedHistory) : [];
   });
   const [showStreamingSection, setShowStreamingSection] = useState(false);
-  const [combinedQuery, setCombinedQuery] = useState(() => {
-    const storedCombinedQuery = sessionStorage.getItem("combinedQuery");
-    return storedCombinedQuery ? storedCombinedQuery : ""; // Start with the previous combined query or an empty string
-  });
   const [chatInput, setChatInput] = useState(true);
+
   console.log(showStreamingSection);
 
   useEffect(() => {
@@ -52,20 +48,11 @@ const ArticleContent = () => {
     }
   }, [chatHistory]); // This will trigger when chatHistory changes
 
-  const handleAskClick = () => {
+  const handleAskClick = async () => {
     if (!query) {
       alert("Please enter a query");
       return;
     }
-
-    // Combine the current query with the previous queries
-    setCombinedQuery((prevCombinedQuery) => {
-      const newCombinedQuery = prevCombinedQuery
-        ? `${prevCombinedQuery} || ${query}`
-        : query; // Add "||" between queries
-      sessionStorage.setItem("combinedQuery", newCombinedQuery); // Persist combined query
-      return newCombinedQuery;
-    });
 
     setShowStreamingSection(true);
     setChatInput(false);
@@ -79,52 +66,91 @@ const ArticleContent = () => {
       pmid: pmid,
     });
 
-    fetch("http://13.127.207.184:80/generateanswer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: bodyData,
-    }).then((response) => {
+    try {
+      const response = await fetch("http://13.127.207.184:80/generateanswer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: bodyData,
+      });
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      
+      let buffer = ""; // Buffer to store incoming chunks of data
+
       setQuery(""); // Clear the input after submission
-      const readStream = () => {
-        reader.read().then(({ done, value }) => {
-          if (done) {
-            setLoading(false);
-            sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-            return;
+
+      const readStream = async () => {
+        let done = false;
+
+        while (!done) {
+          const { value, done: streamDone } = await reader.read();
+          done = streamDone;
+
+          if (value) {
+            // Append the decoded chunk to the buffer
+            buffer += decoder.decode(value, { stream: true });
+            console.log(buffer);
+            // While there is a complete JSON object in the buffer
+            while (buffer.indexOf('{') !== -1 && buffer.indexOf('}') !== -1) {
+              let start = buffer.indexOf('{');
+              let end = buffer.indexOf('}', start); // Ensure this is after the start
+              if (start !== -1 && end !== -1) {
+                // Extract the complete JSON object from the buffer
+                const jsonChunk = buffer.slice(start, end + 1);
+                buffer = buffer.slice(end + 1); // Keep the remaining buffer for the next chunk
+
+                try {
+                  const parsedData = JSON.parse(jsonChunk); // Try parsing the extracted JSON
+                  const answer = parsedData.answer;
+
+                  // Update the chat history with the new response
+                  setChatHistory((chatHistory) => {
+                    const updatedChatHistory = [...chatHistory];
+                    const lastEntryIndex = updatedChatHistory.length - 1;
+
+                    if (lastEntryIndex >= 0) {
+                      updatedChatHistory[lastEntryIndex] = {
+                        ...updatedChatHistory[lastEntryIndex],
+                        response:
+                          updatedChatHistory[lastEntryIndex].response + answer,
+                      };
+                    }
+
+                    return updatedChatHistory;
+                  });
+
+                  setResponse((prev) => prev + answer);
+
+                  // Scroll to the bottom of the chat history
+                  if (endOfMessagesRef.current) {
+                    endOfMessagesRef.current.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
+                } catch (error) {
+                  console.error("Error parsing JSON chunk:", error);
+                  console.log("Chunk content:", jsonChunk);
+                  // Continue reading the stream
+                }
+              } else {
+                // No more complete JSON objects in the buffer; break out of the loop
+                break;
+              }
+            }
           }
+        }
 
-          const chunk = decoder.decode(value, { stream: true });
-
-          try {
-            const jsonChunk = JSON.parse(chunk);
-            const answer = jsonChunk.answer;
-            console.log(answer)
-            setResponse(answer);
-            setChatHistory((prevChatHistory) => {
-              const updatedChatHistory = [...prevChatHistory];
-              updatedChatHistory[updatedChatHistory.length - 1].response +=
-                answer;
-              return updatedChatHistory;
-            });
-            if (endOfMessagesRef.current) {
-              endOfMessagesRef.current.scrollIntoView({ behavior: 'smooth' });
-            }
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            console.log("Chunk content:", chunk);
-          }
-
-          readStream();
-        });
+        setLoading(false);
+        sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
       };
 
       readStream();
-    });
+    } catch (error) {
+      console.error("Error fetching or reading stream:", error);
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -203,10 +229,8 @@ const ArticleContent = () => {
           <h5>History</h5>
           <ul>
             <li>
-              {combinedQuery ? combinedQuery.split(" || ")[0] : ""}
-              {combinedQuery ?"...":""}
+              {response ? articleData.TITLE.slice(0,40)+"...." : ""}
             </li>
-            {/* Only display the first query */}
           </ul>
         </div>
         {articleData ? (
@@ -236,7 +260,8 @@ const ArticleContent = () => {
               )}
               {Object.keys(articleData).map(
                 (key) =>
-                  !predefinedOrder.includes(key) && !key.toLowerCase().includes("display") && (
+                  !predefinedOrder.includes(key) &&
+                  !key.toLowerCase().includes("display") && (
                     <Typography
                       key={key}
                       variant="subtitle1"
