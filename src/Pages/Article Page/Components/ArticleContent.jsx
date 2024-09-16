@@ -183,13 +183,13 @@ const ArticleContent = () => {
         <nav className="nav-menu">
           <ul>
             <li>
-              <a href="#home">Home</a>
+              <a href="">Home</a>
             </li>
             <li>
-              <a href="#why-infer">Why Infer?</a>
+              <a href="">Why Infer?</a>
             </li>
             <li>
-              <a href="#faqs">FAQs</a>
+              <a href="">FAQs</a>
             </li>
           </ul>
         </nav>
