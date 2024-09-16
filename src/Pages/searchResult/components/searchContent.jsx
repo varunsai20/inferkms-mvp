@@ -166,6 +166,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       ) : (
         <p className="searchresult-description" style={{ textAlign: "justify" }}>
           {italicizeTerm(result[result.display].slice(0, 1000))}
+          ...
         </p>
       )
     ) : (
