@@ -134,7 +134,7 @@ const ArticleContent = () => {
   };
 
   const handleBackClick = () => {
-    navigate("/search");
+    navigate("/search", { state: { data, searchTerm } });
   };
 
   const italicizeTerm = (text) => {
@@ -204,7 +204,7 @@ const ArticleContent = () => {
           <ul>
             <li>
               {combinedQuery ? combinedQuery.split(" || ")[0] : ""}
-              ...
+              {combinedQuery ?"...":""}
             </li>
             {/* Only display the first query */}
           </ul>
@@ -236,7 +236,7 @@ const ArticleContent = () => {
               )}
               {Object.keys(articleData).map(
                 (key) =>
-                  !predefinedOrder.includes(key) && (
+                  !predefinedOrder.includes(key) && !key.toLowerCase().includes("display") && (
                     <Typography
                       key={key}
                       variant="subtitle1"
