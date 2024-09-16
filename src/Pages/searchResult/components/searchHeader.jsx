@@ -8,6 +8,7 @@ const SearchHeader = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filteredResults, setFilteredResults] = useState(terms);
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -16,23 +17,21 @@ const SearchHeader = () => {
       const storedSearchTerm = sessionStorage.getItem('SearchTerm');
       if (storedSearchTerm) {
         setSearchTerm(storedSearchTerm);
-        handleSearch(null, storedSearchTerm); // Populate suggestions based on the stored term
+        handleInputChange(null, storedSearchTerm); // Populate suggestions based on the stored term
       }
     } else {
       // Clear session storage when not on the search page
       sessionStorage.removeItem('SearchTerm');
     }
   }, [location.pathname]);
-  const handleSearch = (event, value) => {
+  const handleInputChange = (event, value) => {
     setSearchTerm(value);
-    if (value) {
-      const filteredResults = terms.filter((term) =>
-        term.toLowerCase().includes(value.toLowerCase())
-      );
-      setResults(filteredResults);
-    } else {
-      setResults([]);
-    }
+
+    // Filter results dynamically
+    const results = terms.filter((term) =>
+      term.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredResults(results);
   };
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -75,7 +74,7 @@ const SearchHeader = () => {
         <div className='Search-Nav-Items'>
             <img className="Search-nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
             <section className='Search-nav-links'>
-              <a className="Search-navlink" href="#">Home</a>
+              <a className="Search-navlink" href="/">Home</a>
               <a className="Search-navlink" href="#WhyInfer">Why Infer?</a>
               <a className="Search-navlink" href="#FAQ">FAQs</a>
             </section>
@@ -86,15 +85,16 @@ const SearchHeader = () => {
         </div>
       </div>
       <div className='searchHeader-container'>
-        <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">
-            <Autocomplete
+        <Box id="searchbar-box" display="flex" justifyContent="center" width="100%">        
+        <Autocomplete
                         freeSolo
-                        options={results}
-                        onInputChange={handleSearch}
+                        options={filteredResults}
+                        //open // Keeps the suggestions always visible
+                        onInputChange={handleInputChange}
                         inputValue={searchTerm}
                         renderInput={(params) => (
                             <>
-                                <svg className="fas fa-search searchHeader-searchicon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="fas fa-search icon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="10.3054" cy="10.3054" r="7.49047" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M15.5151 15.9043L18.4518 18.8334" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
@@ -105,11 +105,11 @@ const SearchHeader = () => {
                                     variant="outlined"
                                     fullWidth
                                     onKeyDown={handleKeyDown}
-                                    id="custom-textfield"
+                                    id="LandingHeader-custom-textfield"
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: { paddingLeft: '40px', background: "#fff", borderRadius: '54px',height:"7vh",fontFamily: "Manrope !important",
+                                        style: { padding: '8px 80px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}
@@ -118,16 +118,28 @@ const SearchHeader = () => {
                                     }}
                                 />
                                 
-                                 </>
+
+                                
+                            </>
                         )}
                         className="searchHeader-autocomplete"
-                    />  
-                    <select id="cars" className="searchHeader-dropdown" name="cars">
-                                     <option value="volvo">BestSearch</option>
-                                    <option value="saab">Abstarct</option>
-                                    <option value="mercedes">Articles</option>
-                                    <option value="audi">Books</option>
-                    </select> 
+                        
+                    />
+                    <div className='searchHeader-dropdown-div'>
+                    {loading ? <>
+                                  
+                                  <CircularProgress className="searchLoader" color="secondary" background={"white"} size={24}/> 
+                               </> : <>
+                               <select id="cars" className="searchHeader-dropdown" name="cars">
+                               <option value="volvo">BestSearch</option>
+                              <option value="saab">Abstarct</option>
+                               <option value="mercedes">Articles</option>
+                              <option value="audi">Books</option>
+                                  </select> 
+                                      </>}        
+                    </div>
+                             
+                      
         </Box>
       </div>
     </Container>

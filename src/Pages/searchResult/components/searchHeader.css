@@ -95,6 +95,22 @@ background: linear-gradient(90deg, #F5F9FF 0%, #FFF5FE 100%);
 display: flow;
 
 }
+#searchbar-box{
+    position: absolute;
+    height: 7vh;
+    width: 75%;
+    margin: auto;
+    left: 12%;
+    top: 20%;
+    /* background: #fff;
+    border: 1px solid black; */
+    border-radius: 54px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+
 .SearchHeader-navbarContainer{
     width: 95%;
     margin: auto;
@@ -133,9 +149,9 @@ display: flow;
 
 .searchHeader-autocomplete{
     position: absolute;
-    left: 12.5%;
-    top: 24%;
-    width: 75%;
+    /* left: 7.5%; */
+    /* top: 0%; */
+    width: 100%;
     height: 7vh;
     display: flex;
     align-items: center;
@@ -143,14 +159,28 @@ display: flow;
     /* margin: auto 0; */
     margin: auto;
 }
-
+.MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment{
+    margin-right: 17% !important;
+}
+.searchHeader-dropdown-div{
+    position: absolute;
+    width: 18%;
+    right: 0%;
+    top: 0%;
+    height: 7vh;
+}
 .searchHeader-dropdown{
     position: absolute;
-    right: 13%;
-    top: 25%;
+    width: 100%;
+    right: 0%;
+    top: 0%;
     height: 7vh;
     border: none;
     background: inherit;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
     outline:none;
+    border-radius: 0 54px 54px 0;
+}
+.searchLoader{
+    margin-top: 15px;
 }

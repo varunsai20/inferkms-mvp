@@ -73,7 +73,6 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const handleNavigate = (pmid) => {
     navigate(`/article/${pmid}`, { state: { data: data, searchTerm } });
   };
-
   // Calculate the index range for articles to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -85,13 +84,17 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       setCurrentPage(newPage);
     }
   };
+  useEffect(() => {
+    // Reset currentPage to 1 whenever new search results are loaded
+    setCurrentPage(1);
+  }, [data.articles]);
 
   // Calculate total pages
   const totalPages = Math.ceil(data.articles.length / ITEMS_PER_PAGE);
 
   return (
     <>
-    <Container maxWidth="xl" id=''>
+    <Container maxWidth="xl" id='Search-Content-ContainerBox'>
         <div id='Search-Content-Container'>
         <div className='searchContent-left'>
             <h3 className="title">Similar results</h3>
@@ -142,18 +145,33 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
               </button>
             </div>
             <div className='searchContent-articles'>
+
               <div className="searchresults-list">
                 {paginatedArticles.map((result, index) => (
+                  
                   <div key={index} className="searchresult-item">
-                    <h3 className="searchresult-title" onClick={() => handleNavigate(result.PMID)}>
+                    
+                    <h3 className="searchresult-title"onClick={() => handleNavigate(result.PMID)}>
                       <input type="checkbox" className="result-checkbox" />
                       {italicizeTerm(result.TITLE)}
                     </h3>
                     <p className="searchresult-authors">{result.authors}</p>
                     <p className="searchresult-pmid">{`PMID: ${result.PMID}`}</p>
-                    <p className="searchresult-description" style={{ textAlign: "justify" }}>
-                      {italicizeTerm(result.INTRODUCTION)}
-                    </p>
+
+                    
+  { 
+    result.display && result[result.display] ? (
+      result.display === 'TITLE' ? (
+        <p className="searchresult-description"></p>  // or any fallback you want
+      ) : (
+        <p className="searchresult-description" style={{ textAlign: "justify" }}>
+          {italicizeTerm(result[result.display].slice(0, 1000))}
+        </p>
+      )
+    ) : (
+      <p className="searchresult-description">No relevant content available</p>
+    )
+  }
                   </div>
                 ))}
               </div>
