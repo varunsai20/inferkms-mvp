@@ -201,15 +201,16 @@ const ArticleContent = () => {
     <div className="container">
       <header className="header">
         <div className="logo">
-          <img
+          <a href="/"><img
             src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
             alt="Infer Logo"
           />
+          </a>
         </div>
         <nav className="nav-menu">
           <ul>
             <li>
-              <a href="">Home</a>
+              <a href="/">Home</a>
             </li>
             <li>
               <a href="">Why Infer?</a>

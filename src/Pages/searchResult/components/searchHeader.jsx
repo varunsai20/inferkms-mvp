@@ -72,11 +72,11 @@ const SearchHeader = () => {
     <Container maxWidth="xl" id='Search-Nav-Container'>
       <div className='Search-Nav'>
         <div className='Search-Nav-Items'>
-            <img className="Search-nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
+            <a href="/" ><img className="Search-nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img></a>
             <section className='Search-nav-links'>
               <a className="Search-navlink" href="/">Home</a>
-              <a className="Search-navlink" href="#WhyInfer">Why Infer?</a>
-              <a className="Search-navlink" href="#FAQ">FAQs</a>
+              <a className="Search-navlink" href="">Why Infer?</a>
+              <a className="Search-navlink" href="">FAQs</a>
             </section>
             <section className='Search-nav-login'>
               <button className='btn' id='search-signup-btn'>Signup</button>
