@@ -504,7 +504,9 @@ const ArticleContent = () => {
           {loading ? <CircularProgress size={24} color="white" /> : "Ask"}
         </button>
       </div>
+
     </>
+
   );
 };
 

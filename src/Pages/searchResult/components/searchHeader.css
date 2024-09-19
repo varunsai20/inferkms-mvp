@@ -1,4 +1,4 @@
-#Search-Nav-Container{
+/* #Search-Nav-Container{
     position: absolute;
     top: 2%;
     width: 96%;
@@ -8,19 +8,33 @@
     background-position: center;
     color: white;
     margin: 2% 2% 2% 2%;
-    background-color: #20558a;
-}
+    background: rgba(245, 249, 255, 1);
+
+} */
 .Search-Nav{
     margin: 2%;
+    /* position: absolute; */
+    /* top: 2%; */
+    width: 96%;
+    /* height: 20vh; */
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    margin: 2% 2% 2% 2%;
+    background: linear-gradient(90deg, rgba(254, 118, 117, 0.2) 0%, rgba(204, 129, 185, 0.2) 34.2%, rgba(26, 168, 210, 0.2) 68.81%, rgba(76, 210, 217, 0.2) 100%);
+
 }
+
 .Search-Nav-Items{
     display: flex;
+    margin: 2%;
 }
 .Search-nav-logo{
     display: flex;
     width: 90px;
     height: 34.66px;
-    background: #fff;
+    /* background: #fff; */
     border-radius: 10px;
 }
 
@@ -38,7 +52,7 @@ margin: auto;
     font-weight: 500;
     line-height: 16.8px;
     text-align: center;
-    color: #fff;
+    color: #000000;
 
 }
 
@@ -62,8 +76,8 @@ margin: auto;
 
 #search-signup-btn{
     background-color: inherit; 
-    color: #fff;
-    border: 1px solid #fff;
+    color: #333;
+    border: 1px solid #000000;
     font-family: Manrope;
     font-size: 14px;
     font-weight: 600;
@@ -85,7 +99,7 @@ margin: auto;
 
 
 .SearchHeader-navbar{
-    width: 96%;
+width: 96%;
 height: 20vh;
 top: 26px;
 left: 26px;
@@ -99,12 +113,12 @@ display: flow;
 
 }
 #searchbar-box{
-    position: absolute;
+    /* position: absolute; */
     height: 7vh;
     width: 75%;
     margin: auto;
-    left: 12%;
-    top: 20%;
+    /* left: 12%;
+    top: 20%; */
     /* background: #fff;
     border: 1px solid black; */
     border-radius: 54px;
@@ -121,14 +135,15 @@ display: flow;
 }
 
 .searchHeader-container{
-    position: absolute;
-    width: 50%;
-    top: 65%;
+        /* position: absolute; */
+    width: 60%;
+    display: flex;
+    border: 1px solid grey;
+    border-radius: 24px;
+    /* top: 65%; */
     height: 13vh;
     left: 25%;
     margin: auto;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
 }
 
 .searchHeader-searchbar{
@@ -143,15 +158,16 @@ display: flow;
     /* margin: auto 0; */
     margin: auto;
 }
-.searchHeader-searchicon{position: absolute;
-    left: 2%;
-    top: 25%;
+.searchHeader-searchicon{
+    position: absolute;
+    left: 28.5%;
+    /* top: 30%; */
     z-index: 1;
-    color: black
+    color: black;
 }
 
 .searchHeader-autocomplete{
-    position: absolute;
+    /* position: absolute;  */
     /* left: 7.5%; */
     /* top: 0%; */
     width: 100%;
@@ -167,9 +183,9 @@ display: flow;
 }
 .searchHeader-dropdown-div{
     position: absolute;
-    width: 18%;
-    right: 0%;
-    top: 0%;
+    width: 6%;
+    right: 28%;
+    /* top: 0%; */
     height: 7vh;
 }
 .searchHeader-dropdown{

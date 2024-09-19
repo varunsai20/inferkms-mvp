@@ -69,7 +69,9 @@ const SearchHeader = () => {
     }
   };
   return (
-    <Container maxWidth="xl" id='Search-Nav-Container'>
+
+    <>
+    
       <div className='Search-Nav'>
         <div className='Search-Nav-Items'>
             <a href="/" ><img className="Search-nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img></a>
@@ -94,7 +96,7 @@ const SearchHeader = () => {
                         inputValue={searchTerm}
                         renderInput={(params) => (
                             <>
-                                <svg className="fas fa-search icon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="fas fa-search searchHeader-searchicon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="10.3054" cy="10.3054" r="7.49047" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M15.5151 15.9043L18.4518 18.8334" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
@@ -142,7 +144,8 @@ const SearchHeader = () => {
                       
         </Box>
       </div>
-    </Container>
+      </>
+
   )
 }
 

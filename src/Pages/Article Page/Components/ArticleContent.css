@@ -19,6 +19,9 @@
     rgba(26, 168, 210, 0.2) 68.81%,
     rgba(76, 210, 217, 0.2) 100%
   );
+  /* padding: 12px 0; */
+  /* background: rgba(255, 255, 255, 1); */
+  background-color: #0e4d8dd8;
 
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -32,6 +35,9 @@
   margin-left: 26px;
   gap: 0px;
   opacity: 0px;
+
+
+  /* background: white; */
 
   border-radius: 10px;
 }
