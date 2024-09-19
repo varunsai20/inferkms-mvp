@@ -7,6 +7,9 @@ import Arrow from "../../../images/Arrow-left.svg";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { CircularProgress } from "@mui/material";
+import edit from "../../../images/16px.svg";
+import annotate from "../../../images/task-square.svg";
+import notesicon from "../../../images/note-2.svg";
 
 const ArticleContent = () => {
   const { pmid } = useParams();
@@ -17,15 +20,39 @@ const ArticleContent = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState(""); // Initialize with empty string
   const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const endOfMessagesRef = useRef(null); // Ref to scroll to the last message
   const [chatHistory, setChatHistory] = useState(() => {
     const storedHistory = sessionStorage.getItem("chatHistory");
     return storedHistory ? JSON.parse(storedHistory) : [];
   });
   const [showStreamingSection, setShowStreamingSection] = useState(false);
-  const [chatInput, setChatInput] = useState(true);
+  // const [chatInput, setChatInput] = useState(true);
+  const [openAnnotate, setOpenAnnotate] = useState(false);
+  const [openNotes, setOpenNotes] = useState(false);
+  const [activeSection, setActiveSection] = useState("Title");
+  const contentRef = useRef(null); // Ref to target the content div
+  const [contentWidth, setContentWidth] = useState("50%"); // State for content width
 
+  // const handleResize = (event) => {
+  //   const newWidth = event.target.value; // Get the new width from user interaction
+  //   setWidth1(newWidth);
+  //   setWidth2(100 - newWidth); // Second div takes up the remaining width
+  // };
+  useEffect(() => {
+    // Access the computed width of the content div
+    if (contentRef.current) {
+      const width = contentRef.current.offsetWidth; // Get the width of the content div in pixels
+      setContentWidth(`${width}px`); // Update the contentWidth state with the computed width
+    }
+  }, [openAnnotate]);
+  useEffect(() => {
+    // Access the computed width of the content div
+    if (contentRef.current) {
+      const width = contentRef.current.offsetWidth; // Get the width of the content div in pixels
+      setContentWidth(`${width}px`); // Update the contentWidth state with the computed width
+    }
+  }, [openNotes]);
   console.log(showStreamingSection);
 
   useEffect(() => {
@@ -55,7 +82,7 @@ const ArticleContent = () => {
     }
 
     setShowStreamingSection(true);
-    setChatInput(false);
+    // setChatInput(false);
     setLoading(true);
 
     const newChatEntry = { query, response: "" };
@@ -93,9 +120,9 @@ const ArticleContent = () => {
             buffer += decoder.decode(value, { stream: true });
             console.log(buffer);
             // While there is a complete JSON object in the buffer
-            while (buffer.indexOf('{') !== -1 && buffer.indexOf('}') !== -1) {
-              let start = buffer.indexOf('{');
-              let end = buffer.indexOf('}', start); // Ensure this is after the start
+            while (buffer.indexOf("{") !== -1 && buffer.indexOf("}") !== -1) {
+              let start = buffer.indexOf("{");
+              let end = buffer.indexOf("}", start); // Ensure this is after the start
               if (start !== -1 && end !== -1) {
                 // Extract the complete JSON object from the buffer
                 const jsonChunk = buffer.slice(start, end + 1);
@@ -162,6 +189,9 @@ const ArticleContent = () => {
   const handleBackClick = () => {
     navigate("/search", { state: { data, searchTerm } });
   };
+  const handleNavigationClick = (section) => {
+    setActiveSection(section);
+  };
 
   const italicizeTerm = (text) => {
     if (!searchTerm) return text;
@@ -175,6 +205,28 @@ const ArticleContent = () => {
         part
       )
     );
+  };
+  // const contentWidth = "43.61%";
+  // const searchBarwidth = "62%";
+  // const handleWidth = (newWidth) => {
+  //   //const newWidth = parseInt(event.target.value);
+  //   setSearchWidth(newWidth);
+  // };
+  const handleAnnotate = () => {
+    if (openAnnotate) {
+      setOpenAnnotate(false);
+    } else {
+      setOpenAnnotate(true);
+      setOpenNotes(false);
+    }
+  };
+  const handleNotes = () => {
+    if (openNotes) {
+      setOpenNotes(false);
+    } else {
+      setOpenAnnotate(false);
+      setOpenNotes(true);
+    }
   };
 
   const predefinedOrder = [
@@ -198,150 +250,261 @@ const ArticleContent = () => {
   };
 
   return (
-    <div className="container">
-      <header className="header">
-        <div className="logo">
-          <a href="/"><img
-            src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
-            alt="Infer Logo"
-          />
-          </a>
-        </div>
-        <nav className="nav-menu">
-          <ul>
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="">Why Infer?</a>
-            </li>
-            <li>
-              <a href="">FAQs</a>
-            </li>
-          </ul>
-        </nav>
-        <div className="auth-buttons">
-          <button className="signup">Sign up</button>
-          <button className="login">Login</button>
-        </div>
-      </header>
-      <div className="content">
-        <div className="history-pagination">
-          <h5>History</h5>
-          <ul>
-            <li>
-              {response ? articleData.TITLE.slice(0,40)+"...." : ""}
-            </li>
-          </ul>
-        </div>
-        {articleData ? (
-          <div className="article-content">
-            <div className="title">
+    <>
+      <div className="container">
+        <header className="header">
+          <div className="logo">
+            <a href="/">
               <img
-                src={Arrow}
-                alt="Arrow-left-icon"
-                onClick={handleBackClick}
+                src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
+                alt="Infer Logo"
               />
-              <p>{articleData.TITLE}</p>
-            </div>
+            </a>
+          </div>
+          <nav className="nav-menu">
+            <ul>
+              <li>
+                <a href="/">Home</a>
+              </li>
+              <li>
+                <a href="#why-infer">Why Infer?</a>
+              </li>
+              <li>
+                <a href="#FAQ's">FAQs</a>
+              </li>
+            </ul>
+          </nav>
+          <div className="auth-buttons">
+            <button className="signup">Sign up</button>
+            <button className="login">Login</button>
+          </div>
+        </header>
+        <div className="content">
+          <div className="history-pagination">
+            <h5>History</h5>
+            <ul>
+              <li>
+                <a
+                  href="#History"
+                  onClick={() => handleNavigationClick("History")}
+                >
+                  {response ? articleData.TITLE.slice(0, 40) + "...." : ""}
 
-            <div className="meta">
-              {predefinedOrder.map(
-                (key) =>
-                  articleData[key] && (
-                    <Typography
-                      key={key}
-                      variant="subtitle1"
-                      className="typographyRow-articles"
-                    >
-                      <strong>{fieldMappings[key] || key}:</strong>{" "}
-                      {italicizeTerm(articleData[key])}
-                    </Typography>
-                  )
-              )}
-              {Object.keys(articleData).map(
-                (key) =>
-                  !predefinedOrder.includes(key) &&
-                  !key.toLowerCase().includes("display") && (
-                    <Typography
-                      key={key}
-                      variant="subtitle1"
-                      className="typographyRow-articles"
-                    >
-                      <strong>{fieldMappings[key] || key}:</strong>{" "}
-                      {italicizeTerm(articleData[key])}
-                    </Typography>
-                  )
-              )}
-              {showStreamingSection && (
-                <div className="streaming-section">
-                  <div className="streaming-content">
-                    {chatHistory.map((chat, index) => (
-                      <div key={index}>
-                        <div className="query-asked">
-                          <span>{chat.query}</span>
+                  <img src={edit} alt="Edit-logo" />
+                </a>
+              </li>
+              {/* <li>
+                Tell me More...
+                <img src={edit} alt="Edit-logo" />
+              </li>
+              <li>
+                Summarized Articles <img src={edit} alt="Edit-logo" />
+              </li> */}
+              <li className={activeSection === "Similar" ? "active" : ""}>
+                <a
+                  href="#Similar"
+                  onClick={() => handleNavigationClick("Similar")}
+                >
+                  Similar Articles
+                  <img src={edit} alt="Edit-logo" />
+                </a>
+              </li>
+
+              <li className={activeSection === "Related" ? "active" : ""}>
+                <a
+                  href="#Related"
+                  onClick={() => handleNavigationClick("Related")}
+                >
+                  Related Information
+                  <img src={edit} alt="Edit-logo" />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {articleData ? (
+            <div
+              className="article-content"
+              ref={contentRef}
+              style={{ width: `43.61%` }}
+              // value={searchWidth}
+              // onChange={handleWidth}
+            >
+              <div className="title">
+                <img
+                  src={Arrow}
+                  alt="Arrow-left-icon"
+                  onClick={handleBackClick}
+                />
+                <p>{articleData.TITLE}</p>
+              </div>
+              <div className="meta">
+                {predefinedOrder.map(
+                  (key) =>
+                    articleData[key] && (
+                      <Typography
+                        key={key}
+                        variant="subtitle1"
+                        className="typographyRow-articles"
+                      >
+                        <strong>{fieldMappings[key] || key}:</strong>{" "}
+                        {italicizeTerm(articleData[key])}
+                      </Typography>
+                    )
+                )}
+                {Object.keys(articleData).map(
+                  (key) =>
+                    !predefinedOrder.includes(key) &&
+                    !key.toLowerCase().includes("display") && (
+                      <Typography
+                        key={key}
+                        variant="subtitle1"
+                        className="typographyRow-articles"
+                      >
+                        <strong>{fieldMappings[key] || key}:</strong>{" "}
+                        {italicizeTerm(articleData[key])}
+                      </Typography>
+                    )
+                )}
+
+                {showStreamingSection && (
+                  <div className="streaming-section">
+                    <div className="streaming-content">
+                      {chatHistory.map((chat, index) => (
+                        <div key={index}>
+                          <div className="query-asked">
+                            <span>{chat.query}</span>
+                          </div>
+
+                          <div
+                            className="response"
+                            style={{ textAlign: "left" }}
+                          >
+                            <ReactMarkdown>{chat.response}</ReactMarkdown>
+                            <div ref={endOfMessagesRef} />
+                          </div>
                         </div>
-                        
-                        <div
-                          className="response"
-                          style={{ textAlign: "left" }}
-                        >
-                          <ReactMarkdown>{chat.response}</ReactMarkdown>
-                          <div ref={endOfMessagesRef} />
-                        </div>
-                        
-                      </div>
-                    ))}
-                    <div className="stream-input">
-                      <img
-                        src={flag}
-                        alt="flag-logo"
-                        className="stream-flag-logo"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Ask anything..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                      />
-                      <button onClick={handleAskClick}>
-                        {loading ? (
-                          <CircularProgress size={24} color="white" />
-                        ) : (
-                          "Ask"
-                        )}
-                      </button>
+                      ))}
+                      {/* This div will act as the reference for scrolling */}
                     </div>
-                    {/* This div will act as the reference for scrolling */}
-                    
                   </div>
-                  
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="data-not-found">
+              <p>Data not found for the given PMID</p>
+            </div>
+          )}
+
+          <div className="right-aside">
+            {openAnnotate && (
+              <div className="annotate">
+                <div className="tables">
+                  <p style={{ textAlign: "start" }}>Annotations</p>
+                  <table>
+                    <tr className="table-head">
+                      <th>Type</th>
+                      <th>Concept Id</th>
+                      <th>Text</th>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylationv</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Desease</td>
+                      <td>GENE:7164</td>
+                      <td>Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Mutation</td>
+                      <td>GENE:7164</td>
+                      <td>Blood Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Desease</td>
+                      <td>GENE:7164</td>
+                      <td>Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Mutation</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                  </table>
                 </div>
-                
-              )}
+              </div>
+            )}
+            {openNotes && (
+              <div className="notes">
+                <div
+                  className="notes-header"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <p>Notes</p>
+                  <button className="save-button"> save</button>
+                </div>
+                <textarea
+                  className="note-taking"
+                  name=""
+                  id=""
+                  placeholder="Type something..."
+                ></textarea>
+              </div>
+            )}
+            <div className="icons-group">
+              <div
+                className={`annotate-icon ${openAnnotate ? "open" : "closed"}`}
+                onClick={() => {
+                  handleAnnotate();
+                  // handleResize();
+                }}
+              >
+                <img src={annotate} alt="annotate-icon" />
+              </div>
+              <div
+                className={`notes-icon ${openNotes ? "open" : "closed"}`}
+                onClick={() => {
+                  handleNotes();
+                  // handleResize();
+                }}
+              >
+                <img src={notesicon} alt="notes-icon" />
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="data-not-found">
-            <p>Data not found for the given PMID</p>
-          </div>
-        )}
-        {chatInput && (
-          <div className="stream-input">
-            <img src={flag} alt="flag-logo" className="flag-logo" />
-            <input
-              type="text"
-              placeholder="Ask anything..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button onClick={handleAskClick}>Ask</button>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+      <div className="stream-input" style={{ width: contentWidth }}>
+        <img src={flag} alt="flag-logo" className="stream-flag-logo" />
+        <input
+          type="text"
+          placeholder="Ask anything..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button onClick={handleAskClick}>
+          {loading ? <CircularProgress size={24} color="white" /> : "Ask"}
+        </button>
+      </div>
+    </>
   );
 };
 
