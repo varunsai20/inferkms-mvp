@@ -14,7 +14,7 @@
   align-items: center;
   /* padding: 12px 0; */
   /* background: rgba(255, 255, 255, 1); */
-  background-color: #20558a;
+  background-color: #0e4d8dd8;
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   /* margin: 1.4% 0% 1.4% 0%; */
@@ -27,7 +27,7 @@
   margin-left: 26px;
   gap: 0px;
   opacity: 0px;
-  background: white;
+  /* background: white; */
   border-radius: 10px;
 }
 

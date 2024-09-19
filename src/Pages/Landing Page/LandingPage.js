@@ -6,9 +6,9 @@ import LandingContent from './Components/LandingContent'
 const LandingPage = () => {
   return (
     <>
+    
     <LandingHeader/>
     <LandingContent/>
-    {/* <LandingFooter/> */}
     </>
   )
 }
