@@ -45,7 +45,7 @@ const SearchHeader = () => {
       const timeoutId = setTimeout(() => {
         setLoading(false);
         navigate('/search', { state: { data: [], searchTerm } });
-      }, 5000); // 30 seconds      
+      }, 30000); // 30 seconds      
       axios
         .post('http://13.127.207.184:80/query',{query:searchTerm})
         .then((response) => {
@@ -111,7 +111,7 @@ const SearchHeader = () => {
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: { padding: '8px 80px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
+                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}

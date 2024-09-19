@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import FilterPopup from './FilterPopup';
 import annotate from "../../../images/Annotate.svg"
 import notesicon from "../../../images/Notes.svg"
+import axios from "axios";  
 const ITEMS_PER_PAGE = 5;
 
 const SearchContent = ({ open, onClose, applyFilters }) => {
@@ -14,7 +15,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const searchTerm = location.state?.searchTerm || '';
   const navigate = useNavigate();
   const contentRightRef = useRef(null); // Ref for searchContent-right
-
+  const [result,setResults]=useState()
+  const [loading,setLoading]=useState()
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     textAvailability: '',
@@ -48,27 +50,75 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     setShowFilterPopup(!showFilterPopup);
   };
 
+  console.log(filters)
+  const handleFilterChange = async (event) => {
+    const { value, checked } = event.target;
 
-  const handleFilterChange = (event) => {
-    const { name, value, checked } = event.target;
-    if (name === 'articleType') {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
+    const updatedFilters = {
+        ...filters,
         articleType: checked
-          ? [...prevFilters.articleType, value]
-          : prevFilters.articleType.filter((type) => type !== value),
-      }));
-    } else {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [name]: value,
-      }));
-    }
-  };
+            ? [...filters.articleType, value]
+            : filters.articleType.filter((type) => type !== value),
+    };
 
+    setFilters(updatedFilters);
+
+    // Making API request with the updated filters and search term when a filter changes
+    handleButtonClick(updatedFilters);
+};
+
+const handleButtonClick = (updatedFilters) => {
+  if (searchTerm) {
+      setLoading(true);
+      sessionStorage.setItem("SearchTerm", searchTerm);
+
+      const timeoutId = setTimeout(() => {
+          setLoading(false);
+          navigate('/search', { state: { data: [], searchTerm } });
+      }, 30000); // 30 seconds
+
+      const filtersToSend = updatedFilters.articleType;
+
+      // Check the length of filtersToSend
+      const apiUrl = filtersToSend.length > 0 
+          ? 'http://13.127.207.184:80/filter' 
+          : 'http://13.127.207.184:80/query';
+      console.log(apiUrl)
+      const requestBody = filtersToSend.length > 0
+          ? {
+              query: searchTerm,
+              filters: filtersToSend, // Send the filters if available
+            }
+          : {
+              query: searchTerm // Send only the query if filters are empty
+            };
+      console.log(requestBody)
+      axios
+          .post(apiUrl, requestBody)
+          .then((response) => {
+              console.log(response);
+              const data = response.data; // Assuming the API response contains the necessary data
+              setResults(data);
+              // Navigate to SearchPage and pass data via state
+              navigate('/search', { state: { data, searchTerm } });
+              clearTimeout(timeoutId);
+              setLoading(false);
+          })
+          .catch((error) => {
+              console.log(error);
+              clearTimeout(timeoutId);
+              setLoading(false);
+              navigate('/search', { state: { data: [], searchTerm } });
+              console.error('Error fetching data from the API', error);
+          });
+  }
+};
+
+
+    
   const handleApplyFilters = () => {
     applyFilters(filters);
-    onClose();
+    setShowFilterPopup(false);
   };
 
   useEffect(() => {
@@ -86,9 +136,13 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // Function to italicize the search term in the text
   const italicizeTerm = (text) => {
     if (!text) return '';
-    if (!searchTerm) return text;
+    if (!searchTerm) return String(text);
+  
+    // Convert text to a string before using split
+    const textString = String(text);
     const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, index) =>
+  
+    return textString.split(regex).map((part, index) =>
       part.toLowerCase() === searchTerm.toLowerCase() ? (
         <i key={index} className="italic" style={{ color: 'primary', display: 'inline-flex' }}>
           {part}
@@ -98,6 +152,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       )
     );
   };
+  
 
   const handleNavigate = (pmid) => {
     navigate(`/article/${pmid}`, { state: { data: data, searchTerm } });
@@ -106,7 +161,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedArticles = data.articles.slice(startIndex, endIndex);
-
+  console.log(paginatedArticles )
   // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -120,7 +175,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
 
   // Calculate total pages
   const totalPages = Math.ceil(data.articles.length / ITEMS_PER_PAGE);
-
+  console.log(data)
   return (
     <>
     <Container maxWidth="xl" id='Search-Content-ContainerBox'>
@@ -160,13 +215,16 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
           {showArticleType && (
             <div className="searchfilter-options-dropdown">
               <label>
-                <input type="checkbox" /> Books & Documents
+                <input type="checkbox" value="Books and Documents" onChange={handleFilterChange}/> Books & Documents
               </label>
               <label>
-                <input type="checkbox" /> Clinical Trials
+                <input type="checkbox" value="Clinical Trials" onChange={handleFilterChange}/> Clinical Trials
               </label>
               <label>
-                <input type="checkbox" /> Meta Analysis
+                <input type="checkbox" value="Meta Analysis" onChange={handleFilterChange}/> Meta Analysis
+              </label>
+              <label>
+                <input type="checkbox" value="Review" onChange={handleFilterChange}/> Review
               </label>
             </div>
           )}
@@ -222,8 +280,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                     <div className="searchresult-item-header">
                     <h3 className="searchresult-title">
                         <input type="checkbox" className="result-checkbox" />
-                        <span className="gradient-text" onClick={() => handleNavigate(result.PMID)} style={{ cursor: 'pointer', }}>
-                          {italicizeTerm(result.TITLE)}
+                        <span className="gradient-text" onClick={() => handleNavigate(result.pmid)} style={{ cursor: 'pointer', }}>
+                          {italicizeTerm(result.article_title)}
                         </span>
                     </h3>
                     <button className='SearchResult-Options'>
@@ -234,24 +292,11 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                 </svg>
               </button>
               </div>
-                    <p className="searchresult-authors">{result.authors}</p>
-                    <p className="searchresult-pmid">{`PMID: ${result.PMID}`}</p>
-
-                    
-  { 
-    result.display && result[result.display] ? (
-      result.display === 'TITLE' ? (
-        <p className="searchresult-description"></p>  // or any fallback you want
-      ) : (
-        <p className="searchresult-description" style={{ textAlign: "justify" }}>
-          {italicizeTerm(result[result.display].slice(0, 1000))}
-          ...
-        </p>
-      )
-    ) : (
-      <p className="searchresult-description">No relevant content available</p>
-    )
-  }
+                    <p className="searchresult-authors">{`Published on: ${result.publication_date}`}</p>
+                    <p className="searchresult-pmid">{`PMID: ${result.pmid}`}</p>
+                      <p className="searchresult-description" style={{ textAlign: "justify" }}>
+                      {italicizeTerm(Object.values(result.abstract_content[1]).join(' ').slice(0, 1000))}...
+                      </p>
                   </div>
                 ))}
               </div>
