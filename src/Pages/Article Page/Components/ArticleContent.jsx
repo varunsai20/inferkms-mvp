@@ -32,7 +32,7 @@ const ArticleContent = () => {
   const [openNotes, setOpenNotes] = useState(false);
   const [activeSection, setActiveSection] = useState("Title");
   const contentRef = useRef(null); // Ref to target the content div
-  const [contentWidth, setContentWidth] = useState("50%"); // State for content width
+  const [contentWidth, setContentWidth] = useState(); // State for content width
 
   // const handleResize = (event) => {
   //   const newWidth = event.target.value; // Get the new width from user interaction
@@ -57,7 +57,15 @@ const ArticleContent = () => {
 
   useEffect(() => {
     if (data && data.articles) {
-      const article = data.articles.find((item) => item.PMID === pmid);
+      console.log("PMID from state data:", typeof(data.articles.map(article => article.pmid)));
+      console.log(typeof(pmid))
+      // console.log(pmid)
+      const article = data.articles.find((article) => {
+        // Example: If pmid is stored as `article.pmid.value`, modify accordingly
+        const articlePmid = article.pmid.value || article.pmid; // Update this line based on the actual structure of pmid
+        return String(articlePmid) === String(pmid);
+      });
+      console.log(article)
       if (article) {
         setArticleData(article);
       } else {
@@ -67,7 +75,7 @@ const ArticleContent = () => {
       console.error("Data or articles not available");
     }
   }, [pmid, data]);
-
+  console.log(articleData)
   useEffect(() => {
     // Scroll to the bottom whenever chat history is updated
     if (endOfMessagesRef.current) {
@@ -228,26 +236,56 @@ const ArticleContent = () => {
       setOpenNotes(true);
     }
   };
-
-  const predefinedOrder = [
-    "PMID",
-    "TITLE",
-    "INTRODUCTION",
-    "METHODS",
-    "RESULTS",
-    "CONCLUSION",
-    "KEYWORDS",
-  ];
-
-  const fieldMappings = {
-    TITLE: "Title",
-    INTRODUCTION: "Purpose/Background",
-    METHODS: "Methods",
-    RESULTS: "Results/Findings",
-    CONCLUSION: "Conclusion",
-    KEYWORDS: "Keywords",
-    PMID: "PMID",
+  // Dynamically render the nested content in order, removing numbers, and using keys as side headings
+  // Dynamically render the nested content in order, removing numbers, and using keys as side headings
+  const renderContentInOrder = (content, isAbstract = false) => {
+    // Sort keys by their numeric value and ignore the numbers when rendering
+    const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
+  
+    return sortedKeys.map((sectionKey) => {
+      const sectionData = content[sectionKey];
+  
+      // Remove numbers from the section key (e.g., "1: Background" -> "Background")
+      const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, '');  // This will remove any numeric prefixes and trailing punctuation
+  
+      if (typeof sectionData === "object") {
+        // If nested object, display the key as a heading and recursively render content
+        return (
+          <div key={sectionKey} style={{ marginBottom: '20px' }}>
+            <Typography variant="h6" gutterBottom>{cleanedSectionKey}</Typography>
+            {renderContentInOrder(sectionData)} {/* Recursively render nested objects as subheadings */}
+          </div>
+        );
+      } else {
+        // Render the content using ReactMarkdown for abstract or normal content
+        return (
+          <div key={sectionKey} style={{ marginBottom: '10px' }}>
+            <Typography variant="h6">{cleanedSectionKey}</Typography>
+            <ReactMarkdown>{sectionData}</ReactMarkdown> {/* Render content as markdown */}
+          </div>
+        );
+      }
+    });
   };
+
+    // const predefinedOrder = [
+    //   "pmid",
+    //   "body_content",
+    //   "abstract_content",
+    //   "pmc",
+    //   "publication_type",
+    //   "publication_date",
+    // ];
+
+    // const fieldMappings = {
+    //   TITLE: "Title",
+    //   INTRODUCTION: "Purpose/Background",
+    //   METHODS: "Methods",
+    //   RESULTS: "Results/Findings",
+    //   CONCLUSION: "Conclusion",
+    //   KEYWORDS: "Keywords",
+    //   PMID: "PMID",
+    // };
 
   return (
     <>
@@ -288,7 +326,7 @@ const ArticleContent = () => {
                   href="#History"
                   onClick={() => handleNavigationClick("History")}
                 >
-                  {response ? articleData.TITLE.slice(0, 40) + "...." : ""}
+                  {response ? articleData.article_title.slice(0, 40) + "...." : ""}
 
                   <img src={edit} alt="Edit-logo" />
                 </a>
@@ -326,7 +364,7 @@ const ArticleContent = () => {
             <div
               className="article-content"
               ref={contentRef}
-              style={{ width: `43.61%` }}
+              // style={{ width: `43.61%` }}
               // value={searchWidth}
               // onChange={handleWidth}
             >
@@ -336,37 +374,27 @@ const ArticleContent = () => {
                   alt="Arrow-left-icon"
                   onClick={handleBackClick}
                 />
-                <p>{articleData.TITLE}</p>
+                <p>{articleData.article_title}</p>
               </div>
               <div className="meta">
-                {predefinedOrder.map(
-                  (key) =>
-                    articleData[key] && (
-                      <Typography
-                        key={key}
-                        variant="subtitle1"
-                        className="typographyRow-articles"
-                      >
-                        <strong>{fieldMappings[key] || key}:</strong>{" "}
-                        {italicizeTerm(articleData[key])}
-                      </Typography>
-                    )
+                <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px"}}>
+                <span>PMID : <strong style={{color:"black"}}>{articleData.pmid}</strong></span>
+                <span>PMC : <strong style={{color:"black"}}>{articleData.pmc}</strong></span>
+                <span>Publication Date : <strong style={{color:"black"}}>{articleData.publication_date}</strong></span>
+                <span>Publication Type : <strong style={{color:"black"}}>{articleData.publication_type}</strong></span>
+                  </div>
+                
+              {articleData.abstract_content && (
+                  <>
+                    <Typography variant="h4" gutterBottom>Abstract</Typography>
+                    {renderContentInOrder(articleData.abstract_content, true)}
+                  </>
                 )}
-                {Object.keys(articleData).map(
-                  (key) =>
-                    !predefinedOrder.includes(key) &&
-                    !key.toLowerCase().includes("display") && (
-                      <Typography
-                        key={key}
-                        variant="subtitle1"
-                        className="typographyRow-articles"
-                      >
-                        <strong>{fieldMappings[key] || key}:</strong>{" "}
-                        {italicizeTerm(articleData[key])}
-                      </Typography>
-                    )
-                )}
+                {articleData.body_content && renderContentInOrder(articleData.body_content)}
 
+                
+              
+                
                 {showStreamingSection && (
                   <div className="streaming-section">
                     <div className="streaming-content">

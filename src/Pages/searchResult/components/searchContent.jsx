@@ -162,6 +162,7 @@ const handleButtonClick = (updatedFilters) => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedArticles = data.articles.slice(startIndex, endIndex);
   console.log(paginatedArticles )
+
   // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -330,51 +331,51 @@ const handleButtonClick = (updatedFilters) => {
           </div>
         )}
       </div>
-      <div className="right-aside">
+      <div className="search-right-aside">
             {openAnnotate && (
-              <div className="annotate">
-                <div className="tables">
+              <div className="search-annotate">
+                <div className="search-tables">
                   <p style={{ textAlign: "start" }}>Annotations</p>
-                  <div className='Annotate-tables'>
+                  <div className='search-Annotate-tables'>
                   
                   <table>
 
-                    <tr className="table-head">
+                    <tr className="search-table-head">
                       <th>Type</th>
                       <th>Concept Id</th>
                       <th>Text</th>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>GENE</td>
                       <td>GENE:7164</td>
                       <td>Acetylationv</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>GENE</td>
                       <td>GENE:7164</td>
                       <td>Acetylation</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>Desease</td>
                       <td>GENE:7164</td>
                       <td>Cancer</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>GENE</td>
                       <td>GENE:7164</td>
                       <td>Acetylation</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>Mutation</td>
                       <td>GENE:7164</td>
                       <td>Blood Cancer</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>Desease</td>
                       <td>GENE:7164</td>
                       <td>Cancer</td>
                     </tr>
-                    <tr className="table-row">
+                    <tr className="search-table-row">
                       <td>Mutation</td>
                       <td>GENE:7164</td>
                       <td>Acetylation</td>
@@ -385,9 +386,9 @@ const handleButtonClick = (updatedFilters) => {
               </div>
             )}
             {openNotes && (
-              <div className="notes">
+              <div className="search-notes">
                 <div
-                  className="notes-header"
+                  className="search-notes-header"
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -395,25 +396,25 @@ const handleButtonClick = (updatedFilters) => {
                   }}
                 >
                   <p>Notes</p>
-                  <button className="save-button"> save</button>
+                  <button className="search-save-button"> save</button>
                 </div>
                 <textarea
-                  className="note-taking"
+                  className="search-note-taking"
                   name=""
                   id=""
                   placeholder="Type something..."
                 ></textarea>
               </div>
             )}
-            <div className="icons-group">
+            <div className="search-icons-group">
               <div
-                className={`annotate-icon ${openAnnotate ? "open" : "closed"}`}
+                className={`search-annotate-icon ${openAnnotate ? "open" : "closed"}`}
                 onClick={handleAnnotate}
               >
                 <img src={annotate} alt="annotate-icon" />
               </div>
               <div
-                className={`notes-icon ${openNotes ? "open" : "closed"}`}
+                className={`search-notes-icon ${openNotes ? "open" : "closed"}`}
                 onClick={handleNotes}
               >
                 <img src={notesicon} alt="notes-icon" />

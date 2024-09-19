@@ -120,11 +120,11 @@
 
 .article-content {
   width: 43.61%;
-  height: 62vh;
+  height: 67vh;
   /* max-height: 300px; */
   overflow-y: auto;
   text-align: start;
-  margin: 0% 2% 0% 2%;
+  margin: 0% 1% ;
   gap: 28px;
   border-radius: 20px;
   flex: 1;
@@ -344,15 +344,16 @@
   margin-top: 20px;
 } */
 .stream-input {
-  position: relative;
-  /*bottom: 10px; */
+  position: absolute;
+  bottom: 10px;
+  left: 23.5%;
   /* position: relative; */
-  /* width: 100%; */
-  margin: 0% -15% 1% 0%;
-  width: 62%;
+  width: 100%;
+  /* margin: 0% 0% 1% 17%; */
+  width: 68%;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   border-radius: 20px;
   /* z-index: 10; */
   border: 1px solid rgba(235, 235, 243, 1);
@@ -362,7 +363,7 @@
   padding: 15px 60px 15px 40px; /* Add padding for the flag and button */
   border-radius: 20px;
   border: 1px solid #ccc;
-  margin-right: 2%;
+  /* margin-right: 2%; */
   font-size: 14px;
   box-shadow: 500px;
   width: 70%;
@@ -380,7 +381,7 @@
 .stream-input button {
   position: absolute;
   height: 42px;
-  right: 20px;
+  right: 0px;
   top: 50%;
   transform: translateY(-50%);
   padding: 5px 15px;
@@ -420,42 +421,50 @@
   border-radius: 20px; /* Rounding the handle corners */
 }
 
+
+
+
+
+
 .right-aside {
   /* width: 44px;
   height: 88px; */
   display: flex;
   gap: 0px;
   opacity: 0px;
-
+  height: fit-content;
   /* border: 1px solid rgba(235, 235, 243, 1); */
 }
 .annotate {
   width: 349px;
-  /* height: 514px; */
+  height: 514px;
   gap: 0px;
   border-radius: 16px;
-  margin: 5%;
+  margin: 0 5% 0 0;
   opacity: 0px;
   border: 1px solid rgba(235, 235, 243, 1);
+  background: #FBFBFD;
 }
 .notes {
   width: 349px;
-  /* height: 542px; */
+  height: 542px;
   gap: 0px;
   border-radius: 16px;
-  margin: 5%;
+  margin: 0 5% 0 0;
+  
   opacity: 0px;
   border: 1px solid rgba(235, 235, 243, 1);
   background-color: rgba(235, 235, 243, 0.5);
 }
 .note-taking {
   width: 100%;
-  /* height: 514px; */
+  height: 514px;
   box-sizing: border-box;
   background-color: rgba(235, 235, 243, 1);
   border: 1px soild rgba(235, 235, 243, 1);
   flex: 1;
   border: none;
+  padding: 3%;
   outline: none;
   background: transparent;
   resize: none;
@@ -463,8 +472,9 @@
   font-family: Manrope;
 }
 .icons-group {
-  width: 44px;
-  height: 88px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .notes p {
   color: black;
@@ -498,6 +508,11 @@
   font-weight: 600;
   line-height: 20px;
   text-align: left;
+  color: black;
+  margin: 3%    ;
+}
+.Annotate-tables{
+  margin: 3%;
 }
 .table-head {
   border-bottom: 1px solid;
@@ -564,4 +579,7 @@ td {
   font-size: 15px;
   color: rgba(26, 130, 255, 1);
   font-weight: 500;
+  margin: 6px 6px 0 0;
 }
+
+
