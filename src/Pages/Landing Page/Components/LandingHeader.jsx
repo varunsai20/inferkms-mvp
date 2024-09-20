@@ -117,7 +117,7 @@ const LandingHeader = () => {
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
+                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Axiforma !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}

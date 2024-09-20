@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Axiforma';
+    src: url('../../../fonts/Axiforma-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 #Header-Nav-Container{
     background-image: url("../../../images/image\ \(1\).svg");
     position: absolute;
@@ -118,9 +125,9 @@
 #LandinhHeader-searchbar-box{
     position: absolute;
     height: 7vh;
-    width: 75%;
+    width: 90%;
     margin: auto;
-    left: 12%;
+    left: 5%;
     top: 20%;
     /* background: #fff; */
     /* border: 1px solid black; */
@@ -148,7 +155,7 @@ margin: 2% auto;
 
 .searchbar-outer{
     width: 60%;
-    height: 15vh;
+    height: 13vh;
     gap: 32px;
     border-radius: 24px;
     border: 1px solid #FFFFFF;
@@ -157,7 +164,7 @@ margin: 2% auto;
     left: 20%;
     top: 10%;
     margin-bottom: 2%;
-    background: rgba(250, 250, 250, 0.2);
+    background: rgba(250, 250, 250, 0.49);
 
 }
 
