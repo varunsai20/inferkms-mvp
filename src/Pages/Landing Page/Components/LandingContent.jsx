@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import "./LandingContent.css"
 import { Autocomplete, TextField, Container, Box, Button, CircularProgress } from '@mui/material';
 import Location from "../../../images/Location.svg"
@@ -10,6 +10,7 @@ const faqData = [
     { id: 3, number: '03', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
     { id: 4, number: '04', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
 ];
+
 const LandingContent = () => {
     const [activeId, setActiveId] = useState(null);
     const toggleFAQ = (id) => {

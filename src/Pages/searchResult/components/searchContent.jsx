@@ -39,11 +39,17 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // }, [searchTerm]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({
-    textAvailability: "",
-    articleType: [],
-    publicationDate: "",
+  const [filters, setFilters] = useState(() => {
+    // Get initial state from localStorage, if available
+    const savedFilters = localStorage.getItem("filters");
+    return savedFilters ? JSON.parse(savedFilters) : { articleType: [] };
   });
+
+  // Save filters to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(filters));
+  }, [filters]);
+  
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [showTextAvailability, setShowTextAvailability] = useState(true);
   const [showArticleType, setShowArticleType] = useState(true);
@@ -58,6 +64,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       setOpenNotes(false);
     }
   };
+  console.log(filters)
   const handleNotes = () => {
     if (openNotes) {
       setOpenNotes(false);
@@ -106,7 +113,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       }, 30000); // 30 seconds
 
       const filtersToSend = updatedFilters.articleType;
-
+      console.log(typeof(filtersToSend))
       // Check the length of filtersToSend
       const apiUrl =
         filtersToSend.length > 0
@@ -166,27 +173,36 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // Function to italicize the search term in the text
   const italicizeTerm = (text) => {
     if (!text) return "";
-    if (!searchTerm) return String(text);
+  if (!searchTerm) return String(text);
 
-    // Convert text to a string before using split
-    const textString = String(text);
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+  // Convert text to a string before using split
+  const textString = String(text);
+  const regex = new RegExp(`(${searchTerm})`, "gi");
 
-    return textString.split(regex).map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <i
-          key={index}
-          className="italic"
-          style={{ color: "primary", display: "inline-flex" }}
-        >
-          {part}
-        </i>
-      ) : (
-        part
-      )
-    );
+  return textString.split(regex).map((part, index) =>
+    part.toLowerCase() === searchTerm.toLowerCase() ? (
+      <b
+        key={index}
+        className="bold"
+        style={{ fontWeight: "bold", display: "inline-flex" }}
+      >
+        {part}
+      </b>
+    ) : (
+      part
+    )
+  );
   };
-
+  const handleResetAll = () => {
+    // Clear the filters from state
+    setFilters({ articleType: [] });
+    
+    // Clear the filters from localStorage
+    localStorage.removeItem("filters");
+    
+    // Optionally, you can also trigger the API call without any filters
+    handleButtonClick({ articleType: [] });
+  };
   const handleNavigate = (pmid) => {
     navigate(`/article/${pmid}`, { state: { data: data, searchTerm } });
   };
@@ -217,7 +233,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
           <div className="searchContent-left">
             <div className="searchContent-left-header">
               <h3 className="title">Filters</h3>
-              <a className="Filters-ResetAll">Reset All</a>
+              <a className="Filters-ResetAll" onClick={handleResetAll}>Reset All</a>
             </div>
 
             <div className="searchfilter-options">
@@ -262,6 +278,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         type="checkbox"
                         value="Books and Documents"
                         // disabled={checkBoxLoading}
+                        checked={filters.articleType.includes("Books and Documents")}
                         onChange={handleFilterChange}
                         //checked={isChecked} // Controlled checkbox state
                       />{" "}
@@ -272,6 +289,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                       <input
                         type="checkbox"
                         value="Clinical Trials"
+                        checked={filters.articleType.includes("Clinical Trials")}
                         onChange={handleFilterChange}
                       />{" "}
                       Clinical Trials
@@ -280,6 +298,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                       <input
                         type="checkbox"
                         value="Meta Analysis"
+                        checked={filters.articleType.includes("Meta Analysis")}
                         onChange={handleFilterChange}
                       />{" "}
                       Meta Analysis
@@ -288,6 +307,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                       <input
                         type="checkbox"
                         value="Review"
+                        checked={filters.articleType.includes("Review")}
                         onChange={handleFilterChange}
                       />{" "}
                       Review
@@ -437,10 +457,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         results
                       </button>
                       <select className="SearchResult-dropdown">
-                        <option value="volvo">Sort by:Best Match</option>
-                        <option value="mercedes">Articles</option>
-                        <option value="audi">Books</option>
-                        <option value="saab">Abstarct</option>
+                      <option value="volvo">Sort by:Best Match</option>
+                        {/* <option value="mercedes">Sort by:Most Relevant</option> */}
+                        <option value="audi">Sort by:PublicationDate</option>
+                        {/* <option value="saab">Abstarct</option> */}
                       </select>
                     </div>
                   </div>
@@ -463,57 +483,19 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                                 {italicizeTerm(result.article_title)}
                               </span>
                             </h3>
-                            <button className="SearchResult-Options">
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  clipRule="evenodd"
-                                  d="M9.99996 15C10.46 15 10.8333 15.3733 10.8333 15.8333C10.8333 16.2933 10.46 16.6667 9.99996 16.6667C9.53996 16.6667 9.16663 16.2933 9.16663 15.8333C9.16663 15.3733 9.53996 15 9.99996 15Z"
-                                  stroke="#3A3A40"
-                                  strokeWidth="1.25"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  fillRule="evenodd"
-                                  clipRule="evenodd"
-                                  d="M9.99996 3.3335C10.46 3.3335 10.8333 3.70683 10.8333 4.16683C10.8333 4.62683 10.46 5.00016 9.99996 5.00016C9.53996 5.00016 9.16663 4.62683 9.16663 4.16683C9.16663 3.70683 9.53996 3.3335 9.99996 3.3335Z"
-                                  stroke="#3A3A40"
-                                  strokeWidth="1.25"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  fillRule="evenodd"
-                                  clipRule="evenodd"
-                                  d="M9.99996 9.1665C10.46 9.1665 10.8333 9.53984 10.8333 9.99984C10.8333 10.4598 10.46 10.8332 9.99996 10.8332C9.53996 10.8332 9.16663 10.4598 9.16663 9.99984C9.16663 9.53984 9.53996 9.1665 9.99996 9.1665Z"
-                                  stroke="#3A3A40"
-                                  strokeWidth="1.25"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
+                           
                           </div>
                           <p className="searchresult-authors">{`Published on: ${result.publication_date}`}</p>
                           <p className="searchresult-pmid">{`PMID: ${result.pmid}`}</p>
                           <p
-                            className="searchresult-description"
-                            style={{ textAlign: "justify" }}
-                          >
-                            {italicizeTerm(
-                              Object.values(result.abstract_content[1])
-                                .join(" ")
-                                .slice(0, 1000)
-                            )}
-                            ...
-                          </p>
+                              className="searchresult-description"
+                              style={{ textAlign: "justify" }}
+                            >
+                              {italicizeTerm(
+                                Object.values(result.abstract_content[1]).join(" ").slice(0, 500)
+                              )}
+                              {Object.values(result.abstract_content[1]).join(" ").length > 500 ? "..." : ""}
+                            </p>
                         </div>
                       ))}
                     </div>
@@ -527,7 +509,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                       >
-                        {"<"}
+                        {"<<"}
                       </Button>
                       <span>{currentPage}</span>
                       <span>/ {totalPages}</span>
@@ -535,7 +517,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                       >
-                        {">"}
+                        {">>"}
                       </Button>
                     </div>
                   </div>

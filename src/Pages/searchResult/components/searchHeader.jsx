@@ -18,6 +18,7 @@ const SearchHeader = () => {
   const [filteredResults, setFilteredResults] = useState(terms);
   const navigate = useNavigate();
   const location = useLocation();
+  const [filtersToSend,setFiltersToSend]=useState([])
   useEffect(() => {
     if (location.pathname === "/search") {
       // Check if searchTerm is present in sessionStorage
@@ -45,6 +46,7 @@ const SearchHeader = () => {
       handleButtonClick();
     }
   };
+  console.log(localStorage.getItem("filters"))
   const handleButtonClick = () => {
     if (searchTerm) {
       setLoading(true);
@@ -53,13 +55,42 @@ const SearchHeader = () => {
         setLoading(false);
         navigate("/search", { state: { data: [], searchTerm } });
       }, 30000); // 30 seconds
+
+      let filtersToSend = [];
+    try {
+      const storedFilters = localStorage.getItem("filters");
+      
+      if (storedFilters) {
+        filtersToSend = JSON.parse(storedFilters); // Parse stored JSON
+        console.log(filtersToSend)
+      }
+    } catch (error) {
+      console.error("Error retrieving filters from local storage:", error);
+      // Handle the error gracefully (e.g., display an error message to the user)
+    }
+      console.log(typeof(filtersToSend))
+      const apiUrl =
+        filtersToSend.articleType.length > 0
+          ? "http://13.127.207.184:80/filter"
+          : "http://13.127.207.184:80/query";
+      console.log(apiUrl);
+      const requestBody =
+        filtersToSend.articleType.length > 0
+          ? {
+              query: searchTerm,
+              filters: filtersToSend.articleType, // Send the filters if available
+            }
+          : {
+              query: searchTerm, // Send only the query if filters are empty
+            };
+      console.log(requestBody);
       axios
-        .post("http://13.127.207.184:80/query", { query: searchTerm })
+        .post(apiUrl, requestBody)
         .then((response) => {
           console.log(response);
-          console.log(response.data.articles);
-          sessionStorage.setItem("SearchTerm", searchTerm);
-          const data = response.data; // Assuming the API response contains a 'results' array
+          //setIsChecked((prev) => !prev);
+          //localStorage.setItem("checkboxState", JSON.stringify(!isChecked));
+          const data = response.data; // Assuming the API response contains the necessary data
           setResults(data);
           // Navigate to SearchPage and pass data via state
           navigate("/search", { state: { data, searchTerm } });
@@ -81,21 +112,22 @@ const SearchHeader = () => {
         <div className="Search-Nav-Items">
           <a href="/">
             <img
+            href="/"
               className="Search-nav-logo"
               src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
               alt="Infer logo"
             ></img>
           </a>
           <section className="Search-nav-links">
-            <a className="Search-navlink" href="/">
+            {/* <a className="Search-navlink" href="/">
               Home
-            </a>
-            <a className="Search-navlink" href="">
+            </a> */}
+            {/* <a className="Search-navlink" href="">
               Why Infer?
-            </a>
-            <a className="Search-navlink" href="">
+            </a> */}
+            {/* <a className="Search-navlink" href="">
               FAQs
-            </a>
+            </a> */}
           </section>
           <section className="Search-nav-login">
             <button className="btn" id="search-signup-btn">
@@ -180,8 +212,8 @@ const SearchHeader = () => {
               <>
                 <CircularProgress
                   className="searchLoader"
-                  color="secondary"
-                  background={"white"}
+                  
+                  color={"white"}
                   size={24}
                 />
               </>
@@ -198,16 +230,12 @@ const SearchHeader = () => {
             <Button
               variant="contained"
               className="MuiButtonBase-root"
-              id="search-button"
+              id="SearchHeader-search-button"
               onClick={handleButtonClick}
               disabled={loading}
               style={{ marginBottom: "10px" }}
             >
-              {loading ? (
-                <CircularProgress background={"white"} size={24} />
-              ) : (
-                "Search"
-              )}
+              {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
             </Button>
           </div>
         </Box>

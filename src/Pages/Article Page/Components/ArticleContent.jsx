@@ -11,7 +11,9 @@ import edit from "../../../images/16px.svg";
 import annotate from "../../../images/task-square.svg";
 import notesicon from "../../../images/note-2.svg";
 import rehypeRaw from 'rehype-raw';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import sendicon from "../../../images/sendicon.svg"
+import { faTelegram } from '@fortawesome/free-brands-svg-icons';
 const ArticleContent = () => {
   const { pmid } = useParams();
   const location = useLocation();
@@ -368,9 +370,10 @@ const renderContentInOrder = (content, isAbstract = false) => {
     <>
       <div className="container">
         <header className="header">
-          <div className="logo">
+          <div className="logo" style={{margin:"20px 0"}}>
             <a href="/">
               <img
+              href="/"
                 src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
                 alt="Infer Logo"
               />
@@ -378,25 +381,25 @@ const renderContentInOrder = (content, isAbstract = false) => {
           </div>
           <nav className="nav-menu">
             <ul>
-              <li>
+              {/* <li>
                 <a href="/">Home</a>
-              </li>
+              </li> */}
               {/* <li>
                 <a href="#why-infer">Why Infer?</a>
               </li> */}
-              <li>
+              {/* <li>
                 <a href="#FAQ's">FAQs</a>
-              </li>
+              </li> */}
             </ul>
           </nav>
-          <div className="auth-buttons">
+          <div className="auth-buttons" style={{margin:"20px 0"}}>
             <button className="signup">Sign up</button>
             <button className="login">Login</button>
           </div>
         </header>
         <div className="content">
         <div className="history-pagination">
-        <h5>History</h5>
+        <h5>Recent Interactions</h5>
         <ul>
           { localStorage.getItem("history")? getHistoryTitles().map((item) => (
             <li key={item.pmid}>
@@ -434,21 +437,24 @@ const renderContentInOrder = (content, isAbstract = false) => {
                   <p>{articleData.article_title}</p>
                 </div>
               <div className="meta">
-                <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px"}}>
-                <span>PMID : <strong style={{color:"black"}}>{articleData.pmid}</strong></span>
-                <span>PMC : <strong style={{color:"black"}}>{articleData.pmc}</strong></span>
-                <span>Publication Date : <strong style={{color:"black"}}>{articleData.publication_date}</strong></span>
-                <span>Publication Type : <strong style={{color:"black"}}>{articleData.publication_type}</strong></span>
+                <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px",gap:"10px"}}>
+                <span>
+                          Publication Type : 
+                          <strong style={{ color: "black" }}>
+                            {articleData.publication_type.join(", ")}
+                          </strong>
+                        </span>
+                 <span>PMID : <strong style={{color:"#2b9247"}}>{articleData.pmid}</strong></span>
+               
                   </div>
                 
               {articleData.abstract_content && (
                   <>
-                    <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Abstract</Typography>
+                    <Typography variant="h4" gutterBottom style={{fontSize : "20px", marginBottom:"2% ", marginTop:"2%"}}>Abstract</Typography>
                     {renderContentInOrder(articleData.abstract_content, true)}
                   </>
                 )}
                 {/* <div className="content-brake"></div>  */}
-                <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Body</Typography>
                 {articleData.body_content && renderContentInOrder(articleData.body_content)}
 
                 
@@ -587,9 +593,13 @@ const renderContentInOrder = (content, isAbstract = false) => {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button onClick={handleAskClick}>
-          {loading ? <CircularProgress size={24} color="white" /> : "Ask"}
-        </button>
+        <button onClick={handleAskClick} style={{ width: '6%'}}>
+  {loading ? (
+    <CircularProgress size={24} color="white" />
+  ) : (
+    <FontAwesomeIcon icon={faTelegram} size={'xl'} />
+  )}
+</button>
       </div>
 
     </>

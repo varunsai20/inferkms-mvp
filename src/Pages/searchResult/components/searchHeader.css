@@ -97,7 +97,16 @@
   text-align: left;
   border: 1px solid #fff;
 }
-
+#SearchHeader-search-button{
+  left: 0;
+  position: absolute;
+  /* margin-bottom: 10px; */
+  top: 15%;
+  right: 4%;
+  color: white;
+  border-radius: 25px;
+  background: linear-gradient(94.96deg, #5ea7ff -9.81%, #8c1aff 119.93%);
+}
 .SearchHeader-navbar {
   width: 96%;
   height: 20vh;
@@ -183,9 +192,9 @@
 .MuiAutocomplete-root .MuiOutlinedInput-root {
   height: 46px;
 }
-.MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
+/* .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
   margin-right: 17% !important;
-}
+} */
 .searchHeader-dropdown-div {
   position: absolute;
   width: 6%;

@@ -25,6 +25,7 @@
 }
 .Header-Nav-Items {
   display: flex;
+  justify-content: space-between;
 }
 .nav-logo {
   display: flex;
@@ -176,7 +177,7 @@
   padding-left: 30px; /* Adjust this value to increase padding */
 }
 .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
-  margin-right: 20% !important;
+  margin-right: 13% !important;
 }
 
 .MuiPaper-root {
@@ -234,7 +235,7 @@
   top: 10%;
   z-index: 1;
   color: #ffffff;
-  /* width: 10%; */
+  width: 10%;
   height: 35px;
   padding: 0px 16px 0px 16px;
   gap: 9.12px;

@@ -13,6 +13,10 @@ const LandingHeader = () => {
   const [filteredResults, setFilteredResults] = useState(terms);
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    localStorage.removeItem("filters");
+    localStorage.removeItem("history");
+  },[])
   // useEffect(() => {
   //   if (location.pathname === "/search") {
   //     // Check if searchTerm is present in sessionStorage
@@ -76,12 +80,12 @@ const LandingHeader = () => {
       {/* <img src={LandingHeaderImage} alt='logo'></img> */}
       <div className='Header-Nav'>
         <div className='Header-Nav-Items'>
-            <img className="nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
-            <section className='nav-links'>
-              <a className={`navlink ${location.pathname === '/' ? 'active' : ''}`} href="#">Home</a>
+            <img className="nav-logo" href="/" style={{cursor:"pointer"}}src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
+            {/* <section className='nav-links'> */}
+              {/* <a className={`navlink ${location.pathname === '/' ? 'active' : ''}`} href="#">Home</a> */}
               {/* <a className="navlink" href="#WhyInfer">Why Infer?</a> */}
-              <a className="navlink" href="#FAQ">FAQs</a>
-            </section>
+              {/* <a className="navlink" href="#FAQ">FAQs</a> */}
+            {/* </section> */}
             <section className='nav-login'>
               <button className='btn' id='signup-btn'>Signup</button>
               <button className='btn' id='login-btn'>Login</button>
@@ -126,7 +130,7 @@ const LandingHeader = () => {
                                     }}
                                 />
                                 <Button variant="contained" className="MuiButtonBase-root" id="search-button" onClick={handleButtonClick} disabled={loading}>
-                                {loading ? <CircularProgress background={"white"} size={24} /> : 'Search'}
+                                {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
                     </Button>
 
                                 
