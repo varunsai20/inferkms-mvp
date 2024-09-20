@@ -79,7 +79,7 @@ const LandingHeader = () => {
             <img className="nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
             <section className='nav-links'>
               <a className={`navlink ${location.pathname === '/' ? 'active' : ''}`} href="#">Home</a>
-              <a className="navlink" href="#WhyInfer">Why Infer?</a>
+              {/* <a className="navlink" href="#WhyInfer">Why Infer?</a> */}
               <a className="navlink" href="#FAQ">FAQs</a>
             </section>
             <section className='nav-login'>

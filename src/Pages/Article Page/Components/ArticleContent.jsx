@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import "./ArticleContent.css";
 import { Typography } from "@mui/material";
 import flag from "../../../images/flash.svg";
-import Arrow from "../../../images/Arrow-left.svg";
+import Arrow from "../../../images/back-arrow.svg";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { CircularProgress } from "@mui/material";
@@ -131,7 +131,7 @@ const ArticleContent = () => {
             // Store the latest history entry on top
             if (articleData) {
               let storedHistory = JSON.parse(localStorage.getItem("history")) || [];
-              const newHistoryEntry = { pmid: pmid, title: articleData.article_title };
+              const newHistoryEntry = { pmid: pmid, title: articleData.article_title.toLowerCase() };
   
               // Add the new entry to the beginning of the history
               storedHistory = [newHistoryEntry, ...storedHistory.filter(item => item.pmid !== pmid)];
@@ -381,9 +381,9 @@ const renderContentInOrder = (content, isAbstract = false) => {
               <li>
                 <a href="/">Home</a>
               </li>
-              <li>
+              {/* <li>
                 <a href="#why-infer">Why Infer?</a>
-              </li>
+              </li> */}
               <li>
                 <a href="#FAQ's">FAQs</a>
               </li>
@@ -398,7 +398,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
         <div className="history-pagination">
         <h5>History</h5>
         <ul>
-          {getHistoryTitles().map((item) => (
+          { localStorage.getItem("history")? getHistoryTitles().map((item) => (
             <li key={item.pmid}>
               <a
                 href="#History"
@@ -407,7 +407,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
                 {item.title.slice(0,25)}...
               </a>
             </li>
-          ))}
+          )):""}
         </ul>
       </div>
 
@@ -419,13 +419,18 @@ const renderContentInOrder = (content, isAbstract = false) => {
               // value={searchWidth}
               // onChange={handleWidth}
             >
-                <div className="title">
-                  <img
-                    src={Arrow}
+                <div className="article-title">
+                  {/* <button
+                    
                     alt="Arrow-left-icon"
                     onClick={handleBackClick}
                     style={{cursor:"pointer"}}
-                  />
+                  >Back</button> */}
+                  <div style={{display:"flex", cursor:"pointer"}} onClick={handleBackClick}>
+                    <img src={Arrow} style={{width:"35%"}}></img>
+                  <button  className="back-button">Back</button>
+                  </div>
+                  
                   <p>{articleData.article_title}</p>
                 </div>
               <div className="meta">
