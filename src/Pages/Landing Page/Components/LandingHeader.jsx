@@ -79,7 +79,7 @@ const LandingHeader = () => {
             <img className="nav-logo" src='https://www.infersol.com/wp-content/uploads/2020/02/logo.png' alt="Infer logo"></img>
             <section className='nav-links'>
               <a className={`navlink ${location.pathname === '/' ? 'active' : ''}`} href="#">Home</a>
-              <a className="navlink" href="#WhyInfer">Why Infer?</a>
+              {/* <a className="navlink" href="#WhyInfer">Why Infer?</a> */}
               <a className="navlink" href="#FAQ">FAQs</a>
             </section>
             <section className='nav-login'>
@@ -117,7 +117,7 @@ const LandingHeader = () => {
                                     InputProps={{
                                         ...params.InputProps,
                                         className: 'custom-input',
-                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Manrope !important",
+                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Axiforma !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
                                     }}

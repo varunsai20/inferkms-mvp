@@ -3,19 +3,20 @@ import { useParams, useLocation } from "react-router-dom";
 import "./ArticleContent.css";
 import { Typography } from "@mui/material";
 import flag from "../../../images/flash.svg";
-import Arrow from "../../../images/Arrow-left.svg";
+import Arrow from "../../../images/back-arrow.svg";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { CircularProgress } from "@mui/material";
 import edit from "../../../images/16px.svg";
 import annotate from "../../../images/task-square.svg";
 import notesicon from "../../../images/note-2.svg";
+import rehypeRaw from 'rehype-raw';
 
 const ArticleContent = () => {
   const { pmid } = useParams();
   const location = useLocation();
   const { data } = location.state || { data: [] };
-  const searchTerm = location.state?.SEARCHTERM || "";
+  const [searchTerm,setSearchTerm]=useState("")
   const [articleData, setArticleData] = useState(null);
   const navigate = useNavigate();
   const [query, setQuery] = useState(""); // Initialize with empty string
@@ -57,6 +58,8 @@ const ArticleContent = () => {
 
   useEffect(() => {
     if (data && data.articles) {
+      const savedTerm = sessionStorage.getItem('SearchTerm')
+      setSearchTerm(savedTerm)
       console.log("PMID from state data:", typeof(data.articles.map(article => article.pmid)));
       console.log(typeof(pmid))
       // console.log(pmid)
@@ -88,19 +91,18 @@ const ArticleContent = () => {
       alert("Please enter a query");
       return;
     }
-
+  
     setShowStreamingSection(true);
-    // setChatInput(false);
     setLoading(true);
-
+  
     const newChatEntry = { query, response: "" };
     setChatHistory((prevChatHistory) => [...prevChatHistory, newChatEntry]);
-
+  
     const bodyData = JSON.stringify({
       question: query,
       pmid: pmid,
     });
-
+  
     try {
       const response = await fetch("http://13.127.207.184:80/generateanswer", {
         method: "POST",
@@ -109,24 +111,34 @@ const ArticleContent = () => {
         },
         body: bodyData,
       });
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = ""; // Buffer to store incoming chunks of data
-
-      setQuery(""); // Clear the input after submission
-
+      let buffer = "";
+  
+      setQuery("");
+  
       const readStream = async () => {
         let done = false;
-
+  
         while (!done) {
           const { value, done: streamDone } = await reader.read();
           done = streamDone;
-
+  
           if (value) {
-            // Append the decoded chunk to the buffer
             buffer += decoder.decode(value, { stream: true });
-            console.log(buffer);
+  
+            // Store the latest history entry on top
+            if (articleData) {
+              let storedHistory = JSON.parse(localStorage.getItem("history")) || [];
+              const newHistoryEntry = { pmid: pmid, title: articleData.article_title.toLowerCase() };
+  
+              // Add the new entry to the beginning of the history
+              storedHistory = [newHistoryEntry, ...storedHistory.filter(item => item.pmid !== pmid)];
+  
+              // Update localStorage
+              localStorage.setItem("history", JSON.stringify(storedHistory));
+            }
             // While there is a complete JSON object in the buffer
             while (buffer.indexOf("{") !== -1 && buffer.indexOf("}") !== -1) {
               let start = buffer.indexOf("{");
@@ -201,18 +213,18 @@ const ArticleContent = () => {
     setActiveSection(section);
   };
 
-  const italicizeTerm = (text) => {
+  const boldTerm = (text) => {
+    if (typeof text !== "string") {
+      return JSON.stringify(text);
+    }
+  
     if (!searchTerm) return text;
+  
+    // Create a regex to find the search term
     const regex = new RegExp(`(${searchTerm})`, "gi");
-    return text.split(regex).map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <i key={index} className="italic" color="primary" display="flex">
-          {part}
-        </i>
-      ) : (
-        part
-      )
-    );
+  
+    // Replace the search term in the text with markdown bold syntax
+    return text.replace(regex, "**$1**"); // Wrap the matched term with markdown bold syntax
   };
   // const contentWidth = "43.61%";
   // const searchBarwidth = "62%";
@@ -238,36 +250,92 @@ const ArticleContent = () => {
   };
   // Dynamically render the nested content in order, removing numbers, and using keys as side headings
   // Dynamically render the nested content in order, removing numbers, and using keys as side headings
-  const renderContentInOrder = (content, isAbstract = false) => {
-    // Sort keys by their numeric value and ignore the numbers when rendering
-    const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
-  
-    return sortedKeys.map((sectionKey) => {
-      const sectionData = content[sectionKey];
-  
-      // Remove numbers from the section key (e.g., "1: Background" -> "Background")
-      const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, '');  // This will remove any numeric prefixes and trailing punctuation
-  
-      if (typeof sectionData === "object") {
-        // If nested object, display the key as a heading and recursively render content
-        return (
-          <div key={sectionKey} style={{ marginBottom: '20px' }}>
-            <Typography variant="h6" gutterBottom>{cleanedSectionKey}</Typography>
-            {renderContentInOrder(sectionData)} {/* Recursively render nested objects as subheadings */}
-          </div>
-        );
-      } else {
-        // Render the content using ReactMarkdown for abstract or normal content
-        return (
-          <div key={sectionKey} style={{ marginBottom: '10px' }}>
-            <Typography variant="h6">{cleanedSectionKey}</Typography>
-            <ReactMarkdown>{sectionData}</ReactMarkdown> {/* Render content as markdown */}
-          </div>
-        );
-      }
-    });
-  };
+ 
+// Helper function to capitalize the first letter of each word
+// Helper function to capitalize the first letter of each word
+const capitalizeFirstLetter = (text) => {
+  return text.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+const MyMarkdownComponent = ({ markdownContent }) => {
+  return (
+    <ReactMarkdown
+      rehypePlugins={[rehypeRaw]}  // Enables HTML parsing
+    >
+      {markdownContent}
+    </ReactMarkdown>
+    );
+  };
+const renderContentInOrder = (content, isAbstract = false) => {
+  const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
 
+  return sortedKeys.map((sectionKey) => {
+    const sectionData = content[sectionKey];
+
+    // Remove numbers from the section key
+    const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, '');
+
+    // Handle the case where the key is 'paragraph'
+    if (cleanedSectionKey.toLowerCase() === 'paragraph') {
+      // Check if sectionData is a string, if not convert to string
+      const textContent = typeof sectionData === "string" ? sectionData : JSON.stringify(sectionData);
+      const boldtextContent = boldTerm(textContent);
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display only the value without the key */}
+          <MyMarkdownComponent markdownContent={boldtextContent}/>
+        </div>
+      );
+    }
+
+    // Handle the case where the key is 'keywords'
+    if (cleanedSectionKey.toLowerCase() === 'keywords') {
+      // If sectionData is an array, join the keywords into a single line
+      let keywords = Array.isArray(sectionData) ? sectionData.join(', ') : sectionData;
+      // Capitalize the first letter of each word in the keywords
+      keywords = capitalizeFirstLetter(keywords);
+      const boldKeywords = boldTerm(keywords);
+
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display the key as "Keywords" and the inline keywords */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            Keywords
+          </Typography>
+          <Typography variant="body1">{boldKeywords}</Typography>
+        </div>
+      );
+    }
+
+    if (typeof sectionData === "object") {
+      // Recursively handle nested content
+      return (
+        <div key={sectionKey} style={{ marginBottom: '20px' }}>
+          {/* Display the key only if it's not 'paragraph' */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            {capitalizeFirstLetter(cleanedSectionKey)}
+          </Typography>
+          {renderContentInOrder(sectionData)}
+        </div>
+      );
+    } else {
+      // Handle string content and apply boldTerm
+      const textContent = typeof sectionData === "string" ? sectionData : JSON.stringify(sectionData);
+      const boldtextContent = boldTerm(textContent);
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display the key and its associated value */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            {capitalizeFirstLetter(cleanedSectionKey)}
+          </Typography>
+          <MyMarkdownComponent markdownContent={boldtextContent}/>
+        </div>
+      );
+    }
+  });
+};
+
+
+  
     // const predefinedOrder = [
     //   "pmid",
     //   "body_content",
@@ -286,7 +354,16 @@ const ArticleContent = () => {
     //   KEYWORDS: "Keywords",
     //   PMID: "PMID",
     // };
+    const getHistoryTitles = () => {
+      let storedHistory = JSON.parse(localStorage.getItem("history")) || {};
+      // Return the stored history as an array of {pmid, title} objects
+      return storedHistory
+    };
 
+    // const getHistoryTitles = () => {
+    //   let storedHistory = JSON.parse(localStorage.getItem("history")) || [];
+    //   return storedHistory; // No need to reverse, latest items are already at the top
+    // };
   return (
     <>
       <div className="container">
@@ -304,9 +381,9 @@ const ArticleContent = () => {
               <li>
                 <a href="/">Home</a>
               </li>
-              <li>
+              {/* <li>
                 <a href="#why-infer">Why Infer?</a>
-              </li>
+              </li> */}
               <li>
                 <a href="#FAQ's">FAQs</a>
               </li>
@@ -318,47 +395,21 @@ const ArticleContent = () => {
           </div>
         </header>
         <div className="content">
-          <div className="history-pagination">
-            <h5>History</h5>
-            <ul>
-              <li>
-                <a
-                  href="#History"
-                  onClick={() => handleNavigationClick("History")}
-                >
-                  {response ? articleData.article_title.slice(0, 40) + "...." : ""}
-
-                  <img src={edit} alt="Edit-logo" />
-                </a>
-              </li>
-              {/* <li>
-                Tell me More...
-                <img src={edit} alt="Edit-logo" />
-              </li>
-              <li>
-                Summarized Articles <img src={edit} alt="Edit-logo" />
-              </li> */}
-              <li className={activeSection === "Similar" ? "active" : ""}>
-                <a
-                  href="#Similar"
-                  onClick={() => handleNavigationClick("Similar")}
-                >
-                  Similar Articles
-                  <img src={edit} alt="Edit-logo" />
-                </a>
-              </li>
-
-              <li className={activeSection === "Related" ? "active" : ""}>
-                <a
-                  href="#Related"
-                  onClick={() => handleNavigationClick("Related")}
-                >
-                  Related Information
-                  <img src={edit} alt="Edit-logo" />
-                </a>
-              </li>
-            </ul>
-          </div>
+        <div className="history-pagination">
+        <h5>History</h5>
+        <ul>
+          { localStorage.getItem("history")? getHistoryTitles().map((item) => (
+            <li key={item.pmid}>
+              <a
+                href="#History"
+                onClick={() => navigate(`/article/${item.pmid}`, { state: { data, searchTerm } })}
+              >
+                {item.title.slice(0,25)}...
+              </a>
+            </li>
+          )):""}
+        </ul>
+      </div>
 
           {articleData ? (
             <div
@@ -368,14 +419,20 @@ const ArticleContent = () => {
               // value={searchWidth}
               // onChange={handleWidth}
             >
-              <div className="title">
-                <img
-                  src={Arrow}
-                  alt="Arrow-left-icon"
-                  onClick={handleBackClick}
-                />
-                <p>{articleData.article_title}</p>
-              </div>
+                <div className="article-title">
+                  {/* <button
+                    
+                    alt="Arrow-left-icon"
+                    onClick={handleBackClick}
+                    style={{cursor:"pointer"}}
+                  >Back</button> */}
+                  <div style={{display:"flex", cursor:"pointer"}} onClick={handleBackClick}>
+                    <img src={Arrow} style={{width:"35%"}}></img>
+                  <button  className="back-button">Back</button>
+                  </div>
+                  
+                  <p>{articleData.article_title}</p>
+                </div>
               <div className="meta">
                 <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px"}}>
                 <span>PMID : <strong style={{color:"black"}}>{articleData.pmid}</strong></span>
@@ -386,10 +443,12 @@ const ArticleContent = () => {
                 
               {articleData.abstract_content && (
                   <>
-                    <Typography variant="h4" gutterBottom>Abstract</Typography>
+                    <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Abstract</Typography>
                     {renderContentInOrder(articleData.abstract_content, true)}
                   </>
                 )}
+                {/* <div className="content-brake"></div>  */}
+                <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Body</Typography>
                 {articleData.body_content && renderContentInOrder(articleData.body_content)}
 
                 

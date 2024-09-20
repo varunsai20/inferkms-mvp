@@ -1,15 +1,24 @@
-#Header-Nav-Container {
-  background-image: url("../../../images/image\ \(1\).svg");
-  position: absolute;
-  top: 2%;
-  width: 96%;
-  /* height: 32%; */
-  border-radius: 20px;
-  background-size: cover;
-  background-position: center;
-  color: white;
-  margin: 2% 2% 2% 2%;
-  /* border: 2px solid black;     */
+
+@font-face {
+    font-family: 'Axiforma';
+    src: url('../../../fonts/Axiforma-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+#Header-Nav-Container{
+    background-image: url("../../../images/image\ \(1\).svg");
+    position: absolute;
+    top: 2%;
+    width: 96%;
+    /* height: 32%; */
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    margin: 2% 2% 2% 2%;
+        /* border: 2px solid black;     */
+
 }
 .Header-Nav {
   margin: 2% 2% 0 2%;
@@ -111,49 +120,42 @@
   /* margin-top: 5%; */
 }
 
-#LandinhHeader-searchbar-box {
-  position: absolute;
-  height: 7vh;
-  width: 75%;
-  margin: auto;
-  left: 12%;
-  top: 20%;
-  /* background: #fff; */
-  /* border: 1px solid black; */
-  border-radius: 54px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-}
-.searchbar-divHeader {
-  margin: auto;
-  font-family: Manrope;
-  font-size: 45px;
-  font-weight: 700;
-  line-height: 68.04px;
-  letter-spacing: -0.01em;
-  text-align: center;
-  margin: 0;
-  align-items: center;
-  color: #ffffff;
+
+#LandinhHeader-searchbar-box{
+    position: absolute;
+    height: 7vh;
+    width: 90%;
+    margin: auto;
+    left: 5%;
+    top: 20%;
+    /* background: #fff; */
+    /* border: 1px solid black; */
+    border-radius: 54px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
 }
 
 .searchbar-header {
   margin: 2% auto;
 }
 
-.searchbar-outer {
-  width: 60%;
-  height: 15vh;
-  gap: 32px;
-  border-radius: 24px;
-  border: 1px solid #ffffff;
-  margin-top: 2%;
-  position: relative;
-  left: 20%;
-  top: 10%;
-  margin-bottom: 2%;
-  background: rgba(250, 250, 250, 0.2);
+
+.searchbar-outer{
+    width: 60%;
+    height: 13vh;
+    gap: 32px;
+    border-radius: 24px;
+    border: 1px solid #FFFFFF;
+    margin-top: 2%;
+    position: relative;
+    left: 20%;
+    top: 10%;
+    margin-bottom: 2%;
+    background: rgba(250, 250, 250, 0.49);
+
+
 }
 
 .autocomplete {

@@ -20,9 +20,7 @@
     rgba(76, 210, 217, 0.2) 100%
   );
   /* padding: 12px 0; */
-  /* background: rgba(255, 255, 255, 1); */
-  background-color: #0e4d8dd8;
-
+  /* background: rgba(255, 255, 255, 1); */ 
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
 
@@ -97,14 +95,15 @@
 .history-pagination {
   margin-left: 1%;
   width: 20%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  
   padding: 27px, 0px, 27px, 0px;
   /* height: 70vh; */
   max-height: 700px;
   overflow-y: auto;
   color: #333;
   border-radius: 20px;
-  background-color: rgba(249, 249, 249);
+  border: 1px solid #EBEBF3
+  /* background-color: rgba(249, 249, 249); */
 }
 /* .history-pagination {
   width: 13.27%;
@@ -128,20 +127,27 @@
   gap: 28px;
   border-radius: 20px;
   flex: 1;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   border: 1px solid rgba(235, 235, 243, 1);
 }
-.title {
+.article-title{
   display: flex;
   gap: 10px;
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
   font-weight: 600;
   font-size: 16px;
+  position: sticky;  /* Makes it stick to a position */
+  top: 0;  /* Sticks to the top of the screen */
+  z-index: 1000;  /* Ensures it's above other content */
+  background: #fff;
 }
-
+.content-brake{
+ border: 1px solid #97B0C8;
+ margin-bottom: 2%;
+} 
 .article-content .meta p {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 16px;
   color: #333;
 }
@@ -150,6 +156,7 @@
   font-weight: normal; /* Normal font-weight for the abstract */
   font-size: 14px; /* Keep the font size same */
   margin-bottom: 16px;
+  margin-top: 0;
 }
 .streaming-section {
   width: 100%;
@@ -200,8 +207,8 @@
   clear: both;
   overflow-y: auto;
   color: black;
-  background: aliceblue;
-  font-size: 15px;
+  background: #f9fcfe;
+  font-size: 14px;
 }
 
 .clearfix::after {
@@ -236,7 +243,7 @@
   transition: color 0.3s ease;
   /* border: 0px, 0px, 10px, 0px; */
   border-bottom: 1px solid rgba(235, 235, 243, 1);
-  margin-left: 10%;
+  /* margin-left: 10%; */
 }
 .history-pagination ul li a {
   text-decoration: none;
@@ -278,7 +285,10 @@
   height: 1px;
 }
 .history-pagination ul li + li {
-  margin-top: 20px;
+  /* margin-top: 20px; */
+}
+.custom-bold {
+  font-weight: 900; /* Increase the boldness */
 }
 
 /* .history-pagination h5 {
@@ -371,7 +381,7 @@
 
 .stream-flag-logo {
   position: absolute;
-  left: 30px;
+  left: 2%;
   top: 50%;
   transform: translateY(-50%);
   height: 20px;
@@ -437,7 +447,7 @@
 }
 .annotate {
   width: 349px;
-  height: 514px;
+  height: 70vh;
   gap: 0px;
   border-radius: 16px;
   margin: 0 5% 0 0;
@@ -447,7 +457,7 @@
 }
 .notes {
   width: 349px;
-  height: 542px;
+  height: 70vh;
   gap: 0px;
   border-radius: 16px;
   margin: 0 5% 0 0;
@@ -549,6 +559,10 @@
 /* Add border-left for each th element */
 .table-head th {
   border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+.table-row td {
+  border-left: 1px solid #ddd;
 }
 
 /* Add overall table border styles */
@@ -582,4 +596,16 @@ td {
   margin: 6px 6px 0 0;
 }
 
+.back-button{
+  border: none;
+  padding: 0;
+  border-radius: 36.49px;
+  cursor: pointer;
+  /* margin-left: 10px; */
+  font-size: 14px;
+  color: rgba(26, 130, 255, 1);
+  font-weight: 600;
+  background: transparent;
+    background-color: rgba(255, 255, 255, 1);
+}
 
