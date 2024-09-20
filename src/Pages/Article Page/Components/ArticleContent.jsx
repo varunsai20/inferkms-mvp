@@ -238,35 +238,44 @@ const ArticleContent = () => {
   };
   // Dynamically render the nested content in order, removing numbers, and using keys as side headings
   // Dynamically render the nested content in order, removing numbers, and using keys as side headings
-  const renderContentInOrder = (content, isAbstract = false) => {
-    // Sort keys by their numeric value and ignore the numbers when rendering
-    const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
-  
-    return sortedKeys.map((sectionKey) => {
-      const sectionData = content[sectionKey];
-  
-      // Remove numbers from the section key (e.g., "1: Background" -> "Background")
-      const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, '');  // This will remove any numeric prefixes and trailing punctuation
-  
-      if (typeof sectionData === "object") {
-        // If nested object, display the key as a heading and recursively render content
-        return (
-          <div key={sectionKey} style={{ marginBottom: '20px' }}>
-            <Typography variant="h6" gutterBottom>{cleanedSectionKey}</Typography>
-            {renderContentInOrder(sectionData)} {/* Recursively render nested objects as subheadings */}
-          </div>
-        );
-      } else {
-        // Render the content using ReactMarkdown for abstract or normal content
-        return (
-          <div key={sectionKey} style={{ marginBottom: '10px' }}>
-            <Typography variant="h6">{cleanedSectionKey}</Typography>
-            <ReactMarkdown>{sectionData}</ReactMarkdown> {/* Render content as markdown */}
-          </div>
-        );
-      }
-    });
-  };
+ 
+const renderContentInOrder = (content, isAbstract = false) => {
+  // Sort keys by their numeric value and ignore the numbers when rendering
+  const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
+
+  return sortedKeys.map((sectionKey) => {
+    const sectionData = content[sectionKey];
+
+    // Remove all numbers from the key (both top-level and nested) and handle the 'paragraph' key
+    const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, ''); // This removes numeric prefixes
+
+    // If the key is "paragraph", skip displaying the key and just render the value
+    if (cleanedSectionKey.toLowerCase() === 'paragraph') {
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          <ReactMarkdown>{sectionData}</ReactMarkdown> {/* Render the paragraph value as markdown */}
+        </div>
+      );
+    }
+
+    if (typeof sectionData === "object") {
+      // If nested object, recursively render the content, skipping the key display
+      return (
+        <div key={sectionKey} style={{ marginBottom: '20px' }}>
+          {renderContentInOrder(sectionData)} {/* Recursively render nested objects */}
+        </div>
+      );
+    } else {
+      // Render the value using ReactMarkdown, only showing the cleaned key if it's not 'paragraph'
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          <Typography variant="h6" style={{marginBottom:"2%"}}>{cleanedSectionKey}</Typography>
+          <ReactMarkdown>{sectionData}</ReactMarkdown> {/* Render content as markdown */}
+        </div>
+      );
+    }
+  });
+};
 
     // const predefinedOrder = [
     //   "pmid",
@@ -320,7 +329,7 @@ const ArticleContent = () => {
         <div className="content">
           <div className="history-pagination">
             <h5>History</h5>
-            <ul>
+            {/* <ul>
               <li>
                 <a
                   href="#History"
@@ -331,13 +340,7 @@ const ArticleContent = () => {
                   <img src={edit} alt="Edit-logo" />
                 </a>
               </li>
-              {/* <li>
-                Tell me More...
-                <img src={edit} alt="Edit-logo" />
-              </li>
-              <li>
-                Summarized Articles <img src={edit} alt="Edit-logo" />
-              </li> */}
+              
               <li className={activeSection === "Similar" ? "active" : ""}>
                 <a
                   href="#Similar"
@@ -357,7 +360,7 @@ const ArticleContent = () => {
                   <img src={edit} alt="Edit-logo" />
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </div>
 
           {articleData ? (
@@ -386,10 +389,12 @@ const ArticleContent = () => {
                 
               {articleData.abstract_content && (
                   <>
-                    <Typography variant="h4" gutterBottom>Abstract</Typography>
+                    <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Abstract</Typography>
                     {renderContentInOrder(articleData.abstract_content, true)}
                   </>
                 )}
+                {/* <div className="content-brake"></div>  */}
+                <Typography variant="h4" gutterBottom style={{fontSize : "26px",borderBottom: '1px solid #97B0C8', marginBottom:"2% "}}>Body</Typography>
                 {articleData.body_content && renderContentInOrder(articleData.body_content)}
 
                 

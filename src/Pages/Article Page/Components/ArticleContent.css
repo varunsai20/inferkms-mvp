@@ -20,9 +20,7 @@
     rgba(76, 210, 217, 0.2) 100%
   );
   /* padding: 12px 0; */
-  /* background: rgba(255, 255, 255, 1); */
-  background-color: #0e4d8dd8;
-
+  /* background: rgba(255, 255, 255, 1); */ 
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
 
@@ -97,14 +95,15 @@
 .history-pagination {
   margin-left: 1%;
   width: 20%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  
   padding: 27px, 0px, 27px, 0px;
   /* height: 70vh; */
   max-height: 700px;
   overflow-y: auto;
   color: #333;
   border-radius: 20px;
-  background-color: rgba(249, 249, 249);
+  border: 1px solid #EBEBF3
+  /* background-color: rgba(249, 249, 249); */
 }
 /* .history-pagination {
   width: 13.27%;
@@ -138,7 +137,10 @@
   font-weight: 600;
   font-size: 16px;
 }
-
+.content-brake{
+ border: 1px solid #97B0C8;
+ margin-bottom: 2%;
+} 
 .article-content .meta p {
   font-weight: 600;
   font-size: 16px;
@@ -150,6 +152,7 @@
   font-weight: normal; /* Normal font-weight for the abstract */
   font-size: 14px; /* Keep the font size same */
   margin-bottom: 16px;
+  margin-top: 0;
 }
 .streaming-section {
   width: 100%;
