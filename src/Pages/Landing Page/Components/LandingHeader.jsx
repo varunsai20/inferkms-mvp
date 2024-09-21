@@ -4,7 +4,10 @@ import { Autocomplete, TextField, Container, Box, Button, CircularProgress } fro
 import terms from '../../../final_cleaned_terms_only.json';
 import { useNavigate ,useLocation} from 'react-router-dom';
 import axios from 'axios';
-
+import Left1 from "../../../images/Left1.svg"
+import Left2 from "../../../images/Left2.svg"
+import Right1 from "../../../images/Right1.svg"
+import Right2 from "../../../images/Right2.svg"
 // import LandingHeaderImage from "../../../images/image (1).svg";
 
 const LandingHeader = () => {
@@ -77,6 +80,7 @@ const LandingHeader = () => {
     }
   };
   return (
+    <>
     <Container maxWidth="xl" id='Header-Nav-Container'>
       {/* <img src={LandingHeaderImage} alt='logo'></img> */}
       <div className='Header-Nav'>
@@ -143,7 +147,13 @@ const LandingHeader = () => {
                 </Box>
             </div>
         </div>
+       
     </Container>
+    <img className="left1" src={Left1}/>
+     <img className="left2" src={Left2}/>
+      <img className="right1" src={Right1}/>
+      <img className="right2" src={Right2}/> 
+      </>
   )
 }
 

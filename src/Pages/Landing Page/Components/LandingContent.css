@@ -138,7 +138,15 @@ color: linear-gradient(90.5deg, #FE7675 30.57%, #CC81B9 45.01%, #19A8D2 73.04%);
     margin-top: 6%;
     margin-bottom: 6%;
 }
+.infer{
+    background: linear-gradient(90.5deg, #fe7675 30.57%, #cc81b9 45.01%, #19a8d2 73.04%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* color: #1976d2; */
+    color: transparent;
+    font-weight: 600;
 
+}
 .faq-header {
     display: flex;
     flex-direction: column;
@@ -253,7 +261,7 @@ color: linear-gradient(90.5deg, #FE7675 30.57%, #CC81B9 45.01%, #19A8D2 73.04%);
     color: #010101;
     font-family: manrope;
     margin: auto;
-    margin-left: 3.5%;
+    /* margin-left: 3.5%; */
 
 }
 .contact-info h3{
@@ -277,8 +285,9 @@ color: linear-gradient(90.5deg, #FE7675 30.57%, #CC81B9 45.01%, #19A8D2 73.04%);
     color: #010101;
     font-family: manrope;
     margin: auto;
-    margin-left: 3.5%;
+    /* margin-left: 3.5%; */
     width: 25%;
+    align-items: center;
 }
 .resources h3{
     margin: 0;
@@ -320,8 +329,9 @@ color: linear-gradient(90.5deg, #FE7675 30.57%, #CC81B9 45.01%, #19A8D2 73.04%);
     color: #010101;
     font-family: manrope;
     margin: auto;
-    margin-left: 3.5%;
+    
     width: 25%;
+    /* align-items: end; */
 }
 .newsletter h3{
     margin: 0;

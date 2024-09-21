@@ -454,9 +454,9 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                       <button className="SearchResult-Email">Email</button>
                       <button className="SearchResult-SendTo">Send to</button>
                     </div>
-                    <div>
-                      <button className="SearchResult-count">
-                        <span style={{ color: "blue" }}>
+                    <div style={{display:"flex",flexDirection:"row",alignItems:"baseline"}}>
+                      <div className="SearchResult-count" style={{ marginRight:"15px" }}>
+                        <span style={{ color: "blue"}}>
                           {/* {loading ? (
                           <CircularProgress background={"white"} size={24} />
                           ) : ( */}
@@ -465,13 +465,17 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                           {/* )} */}
                         </span>{" "}
                         results
-                      </button>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"row",alignItems:"baseline",gap:"5px"}}>
+                        <span style={{color:"black", fontSize:"14px"}}>Sort by:</span>
                       <select className="SearchResult-dropdown">
-                      <option value="volvo"  >Sort by:Best Match</option>
+                      <option value="volvo">Best Match</option>
                         {/* <option value="mercedes">Sort by:Most Relevant</option> */}
-                        <option value="audi">Sort by:PublicationDate</option>
+                        <option value="audi">Publication Date</option>
                         {/* <option value="saab">Abstarct</option> */}
                       </select>
+                      </div>
+                     
                     </div>
                   </div>
 
@@ -660,7 +664,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
         <div className="Landing-footer">
           <div className="footer-section contact-info">
             <div style={{ display: "flex", marginBottom: "3%" }}>
-              <img src={Logo}></img>
+              <img src={Logo} href="/"></img>
             </div>
 
             <div style={{ display: "flex", marginBottom: "3%" }}>
@@ -689,19 +693,6 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
             </a>
           </div>
 
-          <div className="footer-section faqs">
-            <h3 style={{ marginBottom: "3%" }}>FAQs</h3>
-
-            <a href="#" style={{ marginBottom: "3%" }}>
-              Lorem Ipsum
-            </a>
-            <a href="#" style={{ marginBottom: "3%" }}>
-              Lorem Ipsum
-            </a>
-            <a href="#" style={{ marginBottom: "3%" }}>
-              Lorem Ipsum
-            </a>
-          </div>
 
           <div className="footer-section newsletter">
             <h3 style={{ marginBottom: "3%" }}>Subscribe to Newsletter</h3>
