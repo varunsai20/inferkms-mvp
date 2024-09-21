@@ -4,6 +4,8 @@ import { Autocomplete, TextField, Container, Box, Button, CircularProgress } fro
 import Location from "../../../images/Location.svg"
 import Message from "../../../images/Message.svg"
 import Logo from "../../../images/Frame 25.svg"
+import profile from "../../../images/profile-circle.svg"
+import FAQ from "../../../images/FAQ.svg"
 const faqData = [
     { id: 1, number: '01', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
     { id: 2, number: '02', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
@@ -22,42 +24,30 @@ const LandingContent = () => {
         <div className='WhyInfer' id="WhyInfer">
                 <section className='WhyInfer-points'>
                     <div className="card">
-                        <div className="number number-1"><span>01</span></div>
-                        <h3 className='card-title'>Lorem Ipsum</h3>
-                        <p className='card-content'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.</p>
+                        <div className="number number-1"><img src={profile}/></div>
+                        <h3 className='card-title'>AI-Driven Data Curation</h3>
+                        <p className='card-content'>InfER’s system helps speed up research by organizing data, making it easy to connect with different data sources.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-2"><span>02</span></div>
-                        <h3 className='card-title'>Lorem Ipsum</h3>
-                        <p className='card-content'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.</p>
+                        <div className="number number-2"><img src={profile}/></div>
+                        <h3 className='card-title'>Seamless Integration</h3>
+                        <p className='card-content'>InfER easily connects with popular platforms, allowing real-time data sharing and automatic updates.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-3"><span>03</span></div>
-                        <h3 className='card-title'>Lorem Ipsum</h3>
-                        <p className='card-content'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.</p>
+                        <div className="number number-3"><img src={profile}/></div>
+                        <h3 className='card-title'>Advanced Analytics Engine</h3>
+                        <p className='card-content'>Uses smart technology to provide insights through forecasts, live data displays, and in-depth analysis.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-4"><span>04</span></div>
-                        <h3 className='card-title'>Lorem Ipsum</h3>
-                        <p className='card-content'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.</p>
+                        <div className="number number-4"><img src={profile}/></div>
+                        <h3 className='card-title'>Collaborative Tools</h3>
+                        <p className='card-content'>InfER’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.</p>
                     </div>
                 </section>
             </div>
             <div className="faq-container" id="FAQ">
-                <h2 className='faq-header'>Frequently Asked Questions</h2>
                 <section className="faq">
-                    {faqData.map(item => (
-                        <div key={item.id} className={`faq-item ${activeId === item.id ? 'active' : ''}`} onClick={() => toggleFAQ(item.id)}>
-                            <div className="faq-question">
-                                <div className="faq-number"><span>{item.number}</span></div>
-                                <h3 id="faq-number-h3">{item.question}</h3>
-                                <div className="toggle-icon">{activeId === item.id ? '–' : '+'}</div>
-                            </div>
-                            <div className="faq-answer" style={{ display: activeId === item.id ? 'block' : 'none' }}>
-                                <p>{item.answer}</p>
-                            </div>
-                        </div>
-                    ))}
+                    <img style={{width:"53%"}}src={FAQ} alt="FAQ" />
                 </section>
             </div>
             <div className='Landing-footer'>

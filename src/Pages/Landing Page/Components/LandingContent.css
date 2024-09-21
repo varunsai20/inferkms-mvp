@@ -48,6 +48,16 @@
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
+    border: 1px solid transparent; /* Create a transparent border */
+    background: linear-gradient(white, white) padding-box,
+      /* White background for the inner area */
+        linear-gradient(90.5deg, #fe7675 30.57%, #cc81b9 45.01%, #19a8d2 73.04%)
+        border-box; /* Gradient for the border */
+   
+
+
+
+
 }
 
 .card:hover {
@@ -72,12 +82,21 @@
 .card-title {
     /* font-size: 18px;
     margin-bottom: 10px; */
-    color: #1A1A1A;
+    background: linear-gradient(
+    90.5deg,
+    #fe7675 30.57%,
+    #cc81b9 45.01%,
+    #19a8d2 73.04%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
     font-family: Manrope;
 font-size: 20px;
 font-weight: 600;
 line-height: 31.2px;
 text-align: center;
+color: linear-gradient(90.5deg, #FE7675 30.57%, #CC81B9 45.01%, #19A8D2 73.04%);
 
 }
 
@@ -86,15 +105,18 @@ text-align: center;
     color: #1A1A1A;
     line-height: 1.6;
     font-family: Manrope;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 400;
-    line-height: 23.36px;
+    line-height: 21.9px;
+    letter-spacing: 0.02em;
+    text-align: center;
+    
     letter-spacing: 0.02em;
     text-align: center;
 
 }
 
-.number-1{
+/* .number-1{
     background-color: #e1f0f7;
 }
 .number-2{
@@ -105,16 +127,16 @@ text-align: center;
 }
 .number-4{
     background-color: #e1f7e4;
-}
+} */
 
 .faq-container {
 
-    width: 50%;
+    /* width: 50%; */
     margin: 0 auto;
     /* margin-top: 10%; */
     color: black;
-    margin-top: 5%;
-    margin-bottom: 5%;
+    margin-top: 6%;
+    margin-bottom: 6%;
 }
 
 .faq-header {
@@ -132,10 +154,10 @@ text-align: center;
 
 }
 
-.faq {
+/* .faq {
     font-size: 16px;
     border-bottom: 1px solid #ddd;
-}
+} */
 
 .faq-item {
     border-bottom: 1px solid #ddd;

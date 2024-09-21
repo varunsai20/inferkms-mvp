@@ -4,6 +4,7 @@ import { Autocomplete, TextField, Container, Box, Button, CircularProgress } fro
 import terms from '../../../final_cleaned_terms_only.json';
 import { useNavigate ,useLocation} from 'react-router-dom';
 import axios from 'axios';
+
 // import LandingHeaderImage from "../../../images/image (1).svg";
 
 const LandingHeader = () => {
