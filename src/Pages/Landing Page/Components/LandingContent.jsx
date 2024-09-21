@@ -4,7 +4,10 @@ import { Autocomplete, TextField, Container, Box, Button, CircularProgress } fro
 import Location from "../../../images/Location.svg"
 import Message from "../../../images/Message.svg"
 import Logo from "../../../images/Frame 25.svg"
-import profile from "../../../images/profile-circle.svg"
+import points1 from "../../../images/points1.svg"
+import points2 from "../../../images/points2.svg"
+import points3 from "../../../images/points3.svg"
+import points4 from "../../../images/points4.svg"
 import FAQ from "../../../images/FAQ.svg"
 import Left1 from "../../../images/Left1.svg"
 import Left2 from "../../../images/Left1.svg"
@@ -37,22 +40,22 @@ const LandingContent = () => {
         <div className='WhyInfer' id="WhyInfer">
                 <section className='WhyInfer-points'>
                     <div className="card">
-                        <div className="number number-1"><img src={profile}/></div>
+                        <div className="number number-1"><img src={points1}/></div>
                         <h3 className='card-title'>AI-Driven Data Curation</h3>
                         <p className='card-content'><span className='infer'>InfER</span>’s system helps speed up research by organizing data, making it easy to connect with different data sources.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-2"><img src={profile}/></div>
+                        <div className="number number-2"><img src={points2}/></div>
                         <h3 className='card-title'>Seamless Integration</h3>
                         <p className='card-content'><span className='infer'>InfER</span> easily connects with popular platforms, allowing real-time data sharing and automatic updates.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-3"><img src={profile}/></div>
+                        <div className="number number-3"><img src={points3}/></div>
                         <h3 className='card-title'>Advanced Analytics Engine</h3>
                         <p className='card-content'><span className='infer'>InfER</span> uses smart technology to provide insights through forecasts, live data displays, and in-depth analysis.</p>
                     </div>
                     <div className="card">
-                        <div className="number number-4"><img src={profile}/></div>
+                        <div className="number number-4"><img src={points4}/></div>
                         <h3 className='card-title'>Collaborative Tools</h3>
                         <p className='card-content'><span className='infer'>InfER</span>’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.</p>
                     </div>
