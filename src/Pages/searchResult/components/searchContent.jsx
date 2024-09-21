@@ -467,7 +467,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         results
                       </button>
                       <select className="SearchResult-dropdown">
-                      <option value="volvo" disabled hidden>Sort by:Best Match</option>
+                      <option value="volvo"  >Sort by:Best Match</option>
                         {/* <option value="mercedes">Sort by:Most Relevant</option> */}
                         <option value="audi">Sort by:PublicationDate</option>
                         {/* <option value="saab">Abstarct</option> */}

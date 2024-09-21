@@ -404,8 +404,8 @@ const renderContentInOrder = (content, isAbstract = false) => {
           { localStorage.getItem("history")? getHistoryTitles().map((item) => (
             <li key={item.pmid}>
               <a
-                href="#History"
-                onClick={() => navigate(`/article/${item.pmid}`, { state: { data, searchTerm } })}
+                
+                
               >
                 {item.title.slice(0,25)}...
               </a>
