@@ -163,12 +163,12 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     sessionStorage.removeItem("chatHistory");
   }, [location]);
 
-  useEffect(() => {
-    // Scroll to the top of the searchContent-right container when the page changes
-    if (contentRightRef.current) {
-      contentRightRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [currentPage]);
+  // useEffect(() => {
+  //   // Scroll to the top of the searchContent-right container when the page changes
+  //   if (contentRightRef.current) {
+  //     contentRightRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [currentPage]);
 
   // Function to italicize the search term in the text
   const italicizeTerm = (text) => {
@@ -216,6 +216,9 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
+      
+        contentRightRef.current.scrollIntoView({ behavior: "smooth" });
+      
     }
   };
   useEffect(() => {
@@ -629,7 +632,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                                 }}
                               >
                                 <p>Notes</p>
+                                <div style={{display:"flex",width: "50%",gap:"10px"}}>
+                                <button className="search-save-button"> Share</button>
                                 <button className="search-save-button"> save</button>
+                                </div>
                               </div>
                               <textarea
                                 className="search-note-taking"

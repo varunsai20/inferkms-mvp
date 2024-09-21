@@ -408,7 +408,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
           { localStorage.getItem("history")? getHistoryTitles().map((item) => (
             <li key={item.pmid}>
               <a>
-            {capitalizeFirstLetter(item.title.slice(0,35))}
+            {capitalize(item.title.slice(0,35))}
             {item.title.length > 35 ? "..." : ""}
           </a>
             </li>
@@ -432,7 +432,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
                     style={{cursor:"pointer"}}
                   >Back</button> */}
                   <div style={{display:"flex",cursor:"pointer",marginTop:"1%"}} onClick={handleBackClick}>
-                    <img src={Arrow} style={{width:"1%"}}></img>
+                    <img src={Arrow} style={{width:"1.5%"}}></img>
                   <button  className="back-button">Back</button>
                   </div>
                   
@@ -447,7 +447,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
                             {articleData.publication_type.join(", ")}
                           </strong>
                         </span>
-                 <span>PMID : <strong style={{color:"#2b9247"}}>{articleData.pmid}</strong></span>
+                 <span style={{color:"#2b9247"}}>PMID : {articleData.pmid}</span>
                
                   </div>
                 
@@ -554,7 +554,10 @@ const renderContentInOrder = (content, isAbstract = false) => {
                   }}
                 >
                   <p>Notes</p>
-                  <button className="save-button"> save</button>
+                  <div style={{display:"flex",width: "50%",gap:"10px"}}>
+                                <button className="search-save-button"> Share</button>
+                                <button className="search-save-button"> save</button>
+                                </div>
                 </div>
                 <textarea
                   className="note-taking"

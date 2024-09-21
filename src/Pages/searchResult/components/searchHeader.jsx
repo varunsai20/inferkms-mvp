@@ -139,7 +139,52 @@ const SearchHeader = () => {
           </section>
         </div>
       </div>
-      <div className="searchHeader-container">
+      <div className='searchbar-outer' style={{left:"0",border:"1px solid grey",margin:"0"}}>
+                <Box id="LandinhHeader-searchbar-box" display="flex" justifyContent="center" width="100%">
+                    <Autocomplete
+                        freeSolo
+                        options={filteredResults}
+                        // open // Keeps the suggestions always visible
+                        onInputChange={handleInputChange}
+                        inputValue={searchTerm}
+                        renderInput={(params) => (
+                            <>
+                                <svg className="fas fa-search icon" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="10.3054" cy="10.3054" r="7.49047" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M15.5151 15.9043L18.4518 18.8334" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+
+                                <TextField
+                                    {...params}
+                                    placeholder="Type to Search"
+                                    variant="outlined"
+                                    fullWidth
+                                    onKeyDown={handleKeyDown}
+                                    id="LandingHeader-custom-textfield"
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        className: 'custom-input',
+                                        style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Axiforma !important",
+                                            fontSize: "16px !important",
+                                            fontWeight: "500 !important" },
+                                    }}
+                                    InputLabelProps={{
+                                        style: { left: '30px' },
+                                    }}
+                                />
+                                <Button variant="contained" className="MuiButtonBase-root" id="search-button" onClick={handleButtonClick} style={{top:"11%"}} disabled={loading}>
+                                {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
+                    </Button>
+
+                                
+                            </>
+                        )}
+                        className="autocomplete"
+                    />
+                                        
+                </Box>
+            </div>
+      {/* <div className="searchHeader-container">
         <Box
           id="searchbar-box"
           display="flex"
@@ -203,43 +248,26 @@ const SearchHeader = () => {
                     style: { left: "30px" },
                   }}
                 />
-              </>
-            )}
-            className="searchHeader-autocomplete"
-          />
-          <div className="searchHeader-dropdown-div">
-            {loading ? (
-              <>
-                <CircularProgress
-                  className="searchLoader"
-                  
-                  color={"white"}
-                  size={24}
-                />
-              </>
-            ) : (
-              <>
-                {/* <select id="cars" className="searchHeader-dropdown" name="cars">
-                               <option value="volvo">BestSearch</option>
-                              <option value="saab">Abstarct</option>
-                               <option value="mercedes">Articles</option>
-                              <option value="audi">Books</option>
-                                  </select>  */}
-              </>
-            )}
-            <Button
+                <Button
               variant="contained"
               className="MuiButtonBase-root"
               id="SearchHeader-search-button"
               onClick={handleButtonClick}
               disabled={loading}
-              style={{ marginBottom: "10px" }}
+              // style={{ marginBottom: "10px" }}
             >
               {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
             </Button>
+              </>
+            )}
+            className="searchHeader-autocomplete"
+          />
+          <div className="searchHeader-dropdown-div">
+            
+            
           </div>
         </Box>
-      </div>
+      </div> */}
     </>
   );
 };
