@@ -258,6 +258,10 @@ const ArticleContent = () => {
 const capitalizeFirstLetter = (text) => {
   return text.replace(/\b\w/g, (char) => char.toUpperCase());
 };
+const capitalize = (text) => {
+  if (!text) return text; // Return if the text is empty
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
 const MyMarkdownComponent = ({ markdownContent }) => {
   return (
     <ReactMarkdown
@@ -392,7 +396,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
               </li> */}
             </ul>
           </nav>
-          <div className="auth-buttons" style={{margin:"20px 0"}}>
+          <div className="auth-buttons" style={{margin:"20px 26px 20px 0"}}>
             <button className="signup">Sign up</button>
             <button className="login">Login</button>
           </div>
@@ -403,12 +407,10 @@ const renderContentInOrder = (content, isAbstract = false) => {
         <ul>
           { localStorage.getItem("history")? getHistoryTitles().map((item) => (
             <li key={item.pmid}>
-              <a
-                
-                
-              >
-                {item.title.slice(0,25)}...
-              </a>
+              <a>
+            {capitalizeFirstLetter(item.title.slice(0,35))}
+            {item.title.length > 35 ? "..." : ""}
+          </a>
             </li>
           )):""}
         </ul>
@@ -429,15 +431,16 @@ const renderContentInOrder = (content, isAbstract = false) => {
                     onClick={handleBackClick}
                     style={{cursor:"pointer"}}
                   >Back</button> */}
-                  <div style={{display:"flex", cursor:"pointer"}} onClick={handleBackClick}>
-                    <img src={Arrow} style={{width:"35%"}}></img>
+                  <div style={{display:"flex",cursor:"pointer",marginTop:"1%"}} onClick={handleBackClick}>
+                    <img src={Arrow} style={{width:"1%"}}></img>
                   <button  className="back-button">Back</button>
                   </div>
                   
-                  <p>{articleData.article_title}</p>
+                  <p style={{marginTop:"0",marginBottom:"0"}}>{articleData.article_title}</p>
+                  
                 </div>
               <div className="meta">
-                <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px",gap:"10px"}}>
+              <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px",gap:"10px"}}>
                 <span>
                           Publication Type : 
                           <strong style={{ color: "black" }}>

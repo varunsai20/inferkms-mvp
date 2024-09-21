@@ -6,6 +6,10 @@ import Message from "../../../images/Message.svg"
 import Logo from "../../../images/Frame 25.svg"
 import profile from "../../../images/profile-circle.svg"
 import FAQ from "../../../images/FAQ.svg"
+import Left1 from "../../../images/Left1.svg"
+import Left2 from "../../../images/Left1.svg"
+import Right1 from "../../../images/Right1.svg"
+import Right2 from "../../../images/Right2.svg"
 const faqData = [
     { id: 1, number: '01', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
     { id: 2, number: '02', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
@@ -20,28 +24,37 @@ const LandingContent = () => {
     };
   return (
     <>
+     
+          
     <Container maxWidth="xl"  id='Landing-Content-Container'>
+        
+        {/* <img className="left1" src={Left1}/> */}
+        {/* <img className="left2" src={Left2}/>
+          <img className="right1" src={Right1}/>
+          <img className="right2" src={Right2}/> */}
+        
+    
         <div className='WhyInfer' id="WhyInfer">
                 <section className='WhyInfer-points'>
                     <div className="card">
                         <div className="number number-1"><img src={profile}/></div>
                         <h3 className='card-title'>AI-Driven Data Curation</h3>
-                        <p className='card-content'>InfER’s system helps speed up research by organizing data, making it easy to connect with different data sources.</p>
+                        <p className='card-content'><span className='infer'>InfER</span>’s system helps speed up research by organizing data, making it easy to connect with different data sources.</p>
                     </div>
                     <div className="card">
                         <div className="number number-2"><img src={profile}/></div>
                         <h3 className='card-title'>Seamless Integration</h3>
-                        <p className='card-content'>InfER easily connects with popular platforms, allowing real-time data sharing and automatic updates.</p>
+                        <p className='card-content'><span className='infer'>InfER</span> easily connects with popular platforms, allowing real-time data sharing and automatic updates.</p>
                     </div>
                     <div className="card">
                         <div className="number number-3"><img src={profile}/></div>
                         <h3 className='card-title'>Advanced Analytics Engine</h3>
-                        <p className='card-content'>Uses smart technology to provide insights through forecasts, live data displays, and in-depth analysis.</p>
+                        <p className='card-content'><span className='infer'>InfER</span> uses smart technology to provide insights through forecasts, live data displays, and in-depth analysis.</p>
                     </div>
                     <div className="card">
                         <div className="number number-4"><img src={profile}/></div>
                         <h3 className='card-title'>Collaborative Tools</h3>
-                        <p className='card-content'>InfER’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.</p>
+                        <p className='card-content'><span className='infer'>InfER</span>’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.</p>
                     </div>
                 </section>
             </div>
@@ -54,7 +67,7 @@ const LandingContent = () => {
             
                 <div className="footer-section contact-info">
                     <div style={{display:"flex",marginBottom:"3%"}}>
-                        <img src={Logo}></img>
+                        <img src={Logo} href="/"></img>
                        
                     </div>
                     
@@ -77,14 +90,14 @@ const LandingContent = () => {
     
                 </div>
 
-                <div className="footer-section faqs">
+                {/* <div className="footer-section faqs">
                     <h3 style={{marginBottom:"3%"}}>FAQs</h3>
                     
                         <a href="#" style={{marginBottom:"3%"}}>Lorem Ipsum</a>
                         <a href="#" style={{marginBottom:"3%"}}>Lorem Ipsum</a>
                         <a href="#" style={{marginBottom:"3%"}}>Lorem Ipsum</a>
                     
-                </div>
+                </div> */}
 
                 <div className="footer-section newsletter">
                     <h3 style={{marginBottom:"3%"}}>Subscribe to Newsletter</h3>

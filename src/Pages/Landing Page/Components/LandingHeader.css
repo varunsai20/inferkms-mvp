@@ -121,14 +121,33 @@
   /* margin-top: 5%; */
 }
 
-
+.left1{
+  position: absolute;
+  left: 3%;
+  top: 45%;      
+}
+.left2{
+  position: absolute;
+  left: 20%;
+  top: 55%; 
+}
+.right1{
+  position: absolute;
+  right: 3%;
+  top: 45%; 
+}
+.right2{
+  position: absolute;
+  right: 20%;
+  top: 55%; 
+}
 #LandinhHeader-searchbar-box{
     position: absolute;
     height: 7vh;
     width: 90%;
     margin: auto;
     left: 5%;
-    top: 20%;
+    top: 26%;
     /* background: #fff; */
     /* border: 1px solid black; */
     border-radius: 54px;

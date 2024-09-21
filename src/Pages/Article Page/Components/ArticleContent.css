@@ -132,6 +132,7 @@
 }
 .article-title{
   display: flex;
+  flex-direction: column;
   gap: 10px;
   /* margin-bottom: 16px; */
   font-weight: 600;
@@ -140,6 +141,7 @@
   top: 0;  /* Sticks to the top of the screen */
   z-index: 1000;  /* Ensures it's above other content */
   background: #fff;
+  padding-bottom: 10px;
 }
 .content-brake{
  border: 1px solid #97B0C8;
@@ -179,7 +181,7 @@
 
 .query-asked {
   background-color: rgba(237, 237, 237, 1);
-  text-align: right;
+  /* text-align: right; */
   float: right;
   max-width: 300px;
   margin-bottom: 10px;
