@@ -3,34 +3,74 @@ import { useParams, useLocation } from "react-router-dom";
 import "./ArticleContent.css";
 import { Typography } from "@mui/material";
 import flag from "../../../images/flash.svg";
-import Arrow from "../../../images/Arrow-left.svg";
+import Arrow from "../../../images/back-arrow.svg";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { CircularProgress } from "@mui/material";
-
+import edit from "../../../images/16px.svg";
+import annotate from "../../../images/task-square.svg";
+import notesicon from "../../../images/note-2.svg";
+import rehypeRaw from 'rehype-raw';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import sendicon from "../../../images/sendicon.svg"
+import { faTelegram } from '@fortawesome/free-brands-svg-icons';
 const ArticleContent = () => {
   const { pmid } = useParams();
   const location = useLocation();
   const { data } = location.state || { data: [] };
-  const searchTerm = location.state?.SEARCHTERM || "";
+  const [searchTerm,setSearchTerm]=useState("")
   const [articleData, setArticleData] = useState(null);
   const navigate = useNavigate();
   const [query, setQuery] = useState(""); // Initialize with empty string
   const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const endOfMessagesRef = useRef(null); // Ref to scroll to the last message
   const [chatHistory, setChatHistory] = useState(() => {
     const storedHistory = sessionStorage.getItem("chatHistory");
     return storedHistory ? JSON.parse(storedHistory) : [];
   });
   const [showStreamingSection, setShowStreamingSection] = useState(false);
-  const [chatInput, setChatInput] = useState(true);
+  // const [chatInput, setChatInput] = useState(true);
+  const [openAnnotate, setOpenAnnotate] = useState(false);
+  const [openNotes, setOpenNotes] = useState(false);
+  const [activeSection, setActiveSection] = useState("Title");
+  const contentRef = useRef(null); // Ref to target the content div
+  const [contentWidth, setContentWidth] = useState(); // State for content width
 
+  // const handleResize = (event) => {
+  //   const newWidth = event.target.value; // Get the new width from user interaction
+  //   setWidth1(newWidth);
+  //   setWidth2(100 - newWidth); // Second div takes up the remaining width
+  // };
+  useEffect(() => {
+    // Access the computed width of the content div
+    if (contentRef.current) {
+      const width = contentRef.current.offsetWidth; // Get the width of the content div in pixels
+      setContentWidth(`${width}px`); // Update the contentWidth state with the computed width
+    }
+  }, [openAnnotate]);
+  useEffect(() => {
+    // Access the computed width of the content div
+    if (contentRef.current) {
+      const width = contentRef.current.offsetWidth; // Get the width of the content div in pixels
+      setContentWidth(`${width}px`); // Update the contentWidth state with the computed width
+    }
+  }, [openNotes]);
   console.log(showStreamingSection);
 
   useEffect(() => {
     if (data && data.articles) {
-      const article = data.articles.find((item) => item.PMID === pmid);
+      const savedTerm = sessionStorage.getItem('SearchTerm')
+      setSearchTerm(savedTerm)
+      console.log("PMID from state data:", typeof(data.articles.map(article => article.pmid)));
+      console.log(typeof(pmid))
+      // console.log(pmid)
+      const article = data.articles.find((article) => {
+        // Example: If pmid is stored as `article.pmid.value`, modify accordingly
+        const articlePmid = article.pmid.value || article.pmid; // Update this line based on the actual structure of pmid
+        return String(articlePmid) === String(pmid);
+      });
+      console.log(article)
       if (article) {
         setArticleData(article);
       } else {
@@ -40,7 +80,7 @@ const ArticleContent = () => {
       console.error("Data or articles not available");
     }
   }, [pmid, data]);
-
+  console.log(articleData)
   useEffect(() => {
     // Scroll to the bottom whenever chat history is updated
     if (endOfMessagesRef.current) {
@@ -53,19 +93,18 @@ const ArticleContent = () => {
       alert("Please enter a query");
       return;
     }
-
+  
     setShowStreamingSection(true);
-    setChatInput(false);
     setLoading(true);
-
+  
     const newChatEntry = { query, response: "" };
     setChatHistory((prevChatHistory) => [...prevChatHistory, newChatEntry]);
-
+  
     const bodyData = JSON.stringify({
       question: query,
       pmid: pmid,
     });
-
+  
     try {
       const response = await fetch("http://13.127.207.184:80/generateanswer", {
         method: "POST",
@@ -74,28 +113,38 @@ const ArticleContent = () => {
         },
         body: bodyData,
       });
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = ""; // Buffer to store incoming chunks of data
-
-      setQuery(""); // Clear the input after submission
-
+      let buffer = "";
+  
+      setQuery("");
+  
       const readStream = async () => {
         let done = false;
-
+  
         while (!done) {
           const { value, done: streamDone } = await reader.read();
           done = streamDone;
-
+  
           if (value) {
-            // Append the decoded chunk to the buffer
             buffer += decoder.decode(value, { stream: true });
-            console.log(buffer);
+  
+            // Store the latest history entry on top
+            if (articleData) {
+              let storedHistory = JSON.parse(localStorage.getItem("history")) || [];
+              const newHistoryEntry = { pmid: pmid, title: articleData.article_title.toLowerCase() };
+  
+              // Add the new entry to the beginning of the history
+              storedHistory = [newHistoryEntry, ...storedHistory.filter(item => item.pmid !== pmid)];
+  
+              // Update localStorage
+              localStorage.setItem("history", JSON.stringify(storedHistory));
+            }
             // While there is a complete JSON object in the buffer
-            while (buffer.indexOf('{') !== -1 && buffer.indexOf('}') !== -1) {
-              let start = buffer.indexOf('{');
-              let end = buffer.indexOf('}', start); // Ensure this is after the start
+            while (buffer.indexOf("{") !== -1 && buffer.indexOf("}") !== -1) {
+              let start = buffer.indexOf("{");
+              let end = buffer.indexOf("}", start); // Ensure this is after the start
               if (start !== -1 && end !== -1) {
                 // Extract the complete JSON object from the buffer
                 const jsonChunk = buffer.slice(start, end + 1);
@@ -162,186 +211,399 @@ const ArticleContent = () => {
   const handleBackClick = () => {
     navigate("/search", { state: { data, searchTerm } });
   };
+  const handleNavigationClick = (section) => {
+    setActiveSection(section);
+  };
 
-  const italicizeTerm = (text) => {
+  const boldTerm = (text) => {
+    if (typeof text !== "string") {
+      return JSON.stringify(text);
+    }
+  
     if (!searchTerm) return text;
+  
+    // Create a regex to find the search term
     const regex = new RegExp(`(${searchTerm})`, "gi");
-    return text.split(regex).map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <i key={index} className="italic" color="primary" display="flex">
-          {part}
-        </i>
-      ) : (
-        part
-      )
-    );
+  
+    // Replace the search term in the text with markdown bold syntax
+    return text.replace(regex, "**$1**"); // Wrap the matched term with markdown bold syntax
   };
-
-  const predefinedOrder = [
-    "PMID",
-    "TITLE",
-    "INTRODUCTION",
-    "METHODS",
-    "RESULTS",
-    "CONCLUSION",
-    "KEYWORDS",
-  ];
-
-  const fieldMappings = {
-    TITLE: "Title",
-    INTRODUCTION: "Purpose/Background",
-    METHODS: "Methods",
-    RESULTS: "Results/Findings",
-    CONCLUSION: "Conclusion",
-    KEYWORDS: "Keywords",
-    PMID: "PMID",
+  // const contentWidth = "43.61%";
+  // const searchBarwidth = "62%";
+  // const handleWidth = (newWidth) => {
+  //   //const newWidth = parseInt(event.target.value);
+  //   setSearchWidth(newWidth);
+  // };
+  const handleAnnotate = () => {
+    if (openAnnotate) {
+      setOpenAnnotate(false);
+    } else {
+      setOpenAnnotate(true);
+      setOpenNotes(false);
+    }
   };
-
+  const handleNotes = () => {
+    if (openNotes) {
+      setOpenNotes(false);
+    } else {
+      setOpenAnnotate(false);
+      setOpenNotes(true);
+    }
+  };
+  // Dynamically render the nested content in order, removing numbers, and using keys as side headings
+  // Dynamically render the nested content in order, removing numbers, and using keys as side headings
+ 
+// Helper function to capitalize the first letter of each word
+// Helper function to capitalize the first letter of each word
+const capitalizeFirstLetter = (text) => {
+  return text.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+const MyMarkdownComponent = ({ markdownContent }) => {
   return (
-    <div className="container">
-      <header className="header">
-        <div className="logo">
-          <a href="/"><img
-            src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
-            alt="Infer Logo"
-          />
-          </a>
-        </div>
-        <nav className="nav-menu">
-          <ul>
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="">Why Infer?</a>
-            </li>
-            <li>
-              <a href="">FAQs</a>
-            </li>
-          </ul>
-        </nav>
-        <div className="auth-buttons">
-          <button className="signup">Sign up</button>
-          <button className="login">Login</button>
-        </div>
-      </header>
-      <div className="content">
-        <div className="history-pagination">
-          <h5>History</h5>
-          <ul>
-            <li>
-              {response ? articleData.TITLE.slice(0,40)+"...." : ""}
-            </li>
-          </ul>
-        </div>
-        {articleData ? (
-          <div className="article-content">
-            <div className="title">
-              <img
-                src={Arrow}
-                alt="Arrow-left-icon"
-                onClick={handleBackClick}
-              />
-              <p>{articleData.TITLE}</p>
-            </div>
+    <ReactMarkdown
+      rehypePlugins={[rehypeRaw]}  // Enables HTML parsing
+    >
+      {markdownContent}
+    </ReactMarkdown>
+    );
+  };
+const renderContentInOrder = (content, isAbstract = false) => {
+  const sortedKeys = Object.keys(content).sort((a, b) => parseInt(a) - parseInt(b));
 
-            <div className="meta">
-              {predefinedOrder.map(
-                (key) =>
-                  articleData[key] && (
-                    <Typography
-                      key={key}
-                      variant="subtitle1"
-                      className="typographyRow-articles"
-                    >
-                      <strong>{fieldMappings[key] || key}:</strong>{" "}
-                      {italicizeTerm(articleData[key])}
-                    </Typography>
-                  )
-              )}
-              {Object.keys(articleData).map(
-                (key) =>
-                  !predefinedOrder.includes(key) &&
-                  !key.toLowerCase().includes("display") && (
-                    <Typography
-                      key={key}
-                      variant="subtitle1"
-                      className="typographyRow-articles"
-                    >
-                      <strong>{fieldMappings[key] || key}:</strong>{" "}
-                      {italicizeTerm(articleData[key])}
-                    </Typography>
-                  )
-              )}
-              {showStreamingSection && (
-                <div className="streaming-section">
-                  <div className="streaming-content">
-                    {chatHistory.map((chat, index) => (
-                      <div key={index}>
-                        <div className="query-asked">
-                          <span>{chat.query}</span>
-                        </div>
-                        
-                        <div
-                          className="response"
-                          style={{ textAlign: "left" }}
-                        >
-                          <ReactMarkdown>{chat.response}</ReactMarkdown>
-                          <div ref={endOfMessagesRef} />
-                        </div>
-                        
-                      </div>
-                    ))}
-                    <div className="stream-input">
-                      <img
-                        src={flag}
-                        alt="flag-logo"
-                        className="stream-flag-logo"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Ask anything..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                      />
-                      <button onClick={handleAskClick}>
-                        {loading ? (
-                          <CircularProgress size={24} color="white" />
-                        ) : (
-                          "Ask"
-                        )}
-                      </button>
-                    </div>
-                    {/* This div will act as the reference for scrolling */}
+  return sortedKeys.map((sectionKey) => {
+    const sectionData = content[sectionKey];
+
+    // Remove numbers from the section key
+    const cleanedSectionKey = sectionKey.replace(/^\d+[:.]?\s*/, '');
+
+    // Handle the case where the key is 'paragraph'
+    if (cleanedSectionKey.toLowerCase() === 'paragraph') {
+      // Check if sectionData is a string, if not convert to string
+      const textContent = typeof sectionData === "string" ? sectionData : JSON.stringify(sectionData);
+      const boldtextContent = boldTerm(textContent);
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display only the value without the key */}
+          <MyMarkdownComponent markdownContent={boldtextContent}/>
+        </div>
+      );
+    }
+
+    // Handle the case where the key is 'keywords'
+    if (cleanedSectionKey.toLowerCase() === 'keywords') {
+      // If sectionData is an array, join the keywords into a single line
+      let keywords = Array.isArray(sectionData) ? sectionData.join(', ') : sectionData;
+      // Capitalize the first letter of each word in the keywords
+      keywords = capitalizeFirstLetter(keywords);
+      const boldKeywords = boldTerm(keywords);
+
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display the key as "Keywords" and the inline keywords */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            Keywords
+          </Typography>
+          <Typography variant="body1">{boldKeywords}</Typography>
+        </div>
+      );
+    }
+
+    if (typeof sectionData === "object") {
+      // Recursively handle nested content
+      return (
+        <div key={sectionKey} style={{ marginBottom: '20px' }}>
+          {/* Display the key only if it's not 'paragraph' */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            {capitalizeFirstLetter(cleanedSectionKey)}
+          </Typography>
+          {renderContentInOrder(sectionData)}
+        </div>
+      );
+    } else {
+      // Handle string content and apply boldTerm
+      const textContent = typeof sectionData === "string" ? sectionData : JSON.stringify(sectionData);
+      const boldtextContent = boldTerm(textContent);
+      return (
+        <div key={sectionKey} style={{ marginBottom: '10px' }}>
+          {/* Display the key and its associated value */}
+          <Typography variant="h6" style={{ marginBottom: "2%" }}>
+            {capitalizeFirstLetter(cleanedSectionKey)}
+          </Typography>
+          <MyMarkdownComponent markdownContent={boldtextContent}/>
+        </div>
+      );
+    }
+  });
+};
+
+
+  
+    // const predefinedOrder = [
+    //   "pmid",
+    //   "body_content",
+    //   "abstract_content",
+    //   "pmc",
+    //   "publication_type",
+    //   "publication_date",
+    // ];
+
+    // const fieldMappings = {
+    //   TITLE: "Title",
+    //   INTRODUCTION: "Purpose/Background",
+    //   METHODS: "Methods",
+    //   RESULTS: "Results/Findings",
+    //   CONCLUSION: "Conclusion",
+    //   KEYWORDS: "Keywords",
+    //   PMID: "PMID",
+    // };
+    const getHistoryTitles = () => {
+      let storedHistory = JSON.parse(localStorage.getItem("history")) || {};
+      // Return the stored history as an array of {pmid, title} objects
+      return storedHistory
+    };
+
+    // const getHistoryTitles = () => {
+    //   let storedHistory = JSON.parse(localStorage.getItem("history")) || [];
+    //   return storedHistory; // No need to reverse, latest items are already at the top
+    // };
+  return (
+    <>
+      <div className="container">
+        <header className="header">
+          <div className="logo" style={{margin:"20px 0"}}>
+            <a href="/">
+              <img
+              href="/"
+                src="https://www.infersol.com/wp-content/uploads/2020/02/logo.png"
+                alt="Infer Logo"
+              />
+            </a>
+          </div>
+          <nav className="nav-menu">
+            <ul>
+              {/* <li>
+                <a href="/">Home</a>
+              </li> */}
+              {/* <li>
+                <a href="#why-infer">Why Infer?</a>
+              </li> */}
+              {/* <li>
+                <a href="#FAQ's">FAQs</a>
+              </li> */}
+            </ul>
+          </nav>
+          <div className="auth-buttons" style={{margin:"20px 0"}}>
+            <button className="signup">Sign up</button>
+            <button className="login">Login</button>
+          </div>
+        </header>
+        <div className="content">
+        <div className="history-pagination">
+        <h5>Recent Interactions</h5>
+        <ul>
+          { localStorage.getItem("history")? getHistoryTitles().map((item) => (
+            <li key={item.pmid}>
+              <a
+                href="#History"
+                onClick={() => navigate(`/article/${item.pmid}`, { state: { data, searchTerm } })}
+              >
+                {item.title.slice(0,25)}...
+              </a>
+            </li>
+          )):""}
+        </ul>
+      </div>
+
+          {articleData ? (
+            <div
+              className="article-content"
+              ref={contentRef}
+              // style={{ width: `43.61%` }}
+              // value={searchWidth}
+              // onChange={handleWidth}
+            >
+                <div className="article-title">
+                  {/* <button
                     
+                    alt="Arrow-left-icon"
+                    onClick={handleBackClick}
+                    style={{cursor:"pointer"}}
+                  >Back</button> */}
+                  <div style={{display:"flex", cursor:"pointer"}} onClick={handleBackClick}>
+                    <img src={Arrow} style={{width:"35%"}}></img>
+                  <button  className="back-button">Back</button>
                   </div>
                   
+                  <p>{articleData.article_title}</p>
                 </div>
+              <div className="meta">
+                <div style={{display:"flex",flexDirection:"column",fontSize:"14px",color:"grey",marginBottom:"5px",gap:"10px"}}>
+                <span>
+                          Publication Type : 
+                          <strong style={{ color: "black" }}>
+                            {articleData.publication_type.join(", ")}
+                          </strong>
+                        </span>
+                 <span>PMID : <strong style={{color:"#2b9247"}}>{articleData.pmid}</strong></span>
+               
+                  </div>
                 
-              )}
+              {articleData.abstract_content && (
+                  <>
+                    <Typography variant="h4" gutterBottom style={{fontSize : "20px", marginBottom:"2% ", marginTop:"2%"}}>Abstract</Typography>
+                    {renderContentInOrder(articleData.abstract_content, true)}
+                  </>
+                )}
+                {/* <div className="content-brake"></div>  */}
+                {articleData.body_content && renderContentInOrder(articleData.body_content)}
+
+                
+              
+                
+                {showStreamingSection && (
+                  <div className="streaming-section">
+                    <div className="streaming-content">
+                      {chatHistory.map((chat, index) => (
+                        <div key={index}>
+                          <div className="query-asked">
+                            <span>{chat.query}</span>
+                          </div>
+
+                          <div
+                            className="response"
+                            style={{ textAlign: "left" }}
+                          >
+                            <ReactMarkdown>{chat.response}</ReactMarkdown>
+                            <div ref={endOfMessagesRef} />
+                          </div>
+                        </div>
+                      ))}
+                      {/* This div will act as the reference for scrolling */}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="data-not-found">
+              <p>Data not found for the given PMID</p>
+            </div>
+          )}
+
+          <div className="right-aside">
+            {openAnnotate && (
+              <div className="annotate">
+                <div className="tables">
+                  <p style={{ textAlign: "start" }}>Annotations</p>
+                  <table>
+                    <tr className="table-head">
+                      <th>Type</th>
+                      <th>Concept Id</th>
+                      <th>Text</th>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylationv</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Desease</td>
+                      <td>GENE:7164</td>
+                      <td>Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>GENE</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Mutation</td>
+                      <td>GENE:7164</td>
+                      <td>Blood Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Desease</td>
+                      <td>GENE:7164</td>
+                      <td>Cancer</td>
+                    </tr>
+                    <tr className="table-row">
+                      <td>Mutation</td>
+                      <td>GENE:7164</td>
+                      <td>Acetylation</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            )}
+            {openNotes && (
+              <div className="notes">
+                <div
+                  className="notes-header"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <p>Notes</p>
+                  <button className="save-button"> save</button>
+                </div>
+                <textarea
+                  className="note-taking"
+                  name=""
+                  id=""
+                  placeholder="Type something..."
+                ></textarea>
+              </div>
+            )}
+            <div className="icons-group">
+              <div
+                className={`annotate-icon ${openAnnotate ? "open" : "closed"}`}
+                onClick={() => {
+                  handleAnnotate();
+                  // handleResize();
+                }}
+              >
+                <img src={annotate} alt="annotate-icon" />
+              </div>
+              <div
+                className={`notes-icon ${openNotes ? "open" : "closed"}`}
+                onClick={() => {
+                  handleNotes();
+                  // handleResize();
+                }}
+              >
+                <img src={notesicon} alt="notes-icon" />
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="data-not-found">
-            <p>Data not found for the given PMID</p>
-          </div>
-        )}
-        {chatInput && (
-          <div className="stream-input">
-            <img src={flag} alt="flag-logo" className="flag-logo" />
-            <input
-              type="text"
-              placeholder="Ask anything..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button onClick={handleAskClick}>Ask</button>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+      <div className="stream-input" style={{ width: contentWidth }}>
+        <img src={flag} alt="flag-logo" className="stream-flag-logo" />
+        <input
+          type="text"
+          placeholder="Ask anything..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button onClick={handleAskClick} style={{ width: '6%'}}>
+  {loading ? (
+    <CircularProgress size={24} color="white" />
+  ) : (
+    <FontAwesomeIcon icon={faTelegram} size={'xl'} />
+  )}
+</button>
+      </div>
+
+    </>
+
   );
 };
 
