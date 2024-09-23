@@ -453,9 +453,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                 <>
                   <div className="SearchResult-Count-Filters">
                     <div className="SearchResult-Option-Left">
-                      <button className="SearchResult-Save">Save</button>
-                      <button className="SearchResult-Email">Email</button>
-                      <button className="SearchResult-SendTo">Send to</button>
+                      
+                      <button className="SearchResult-Annotate">Annotate</button>
                     </div>
                     <div style={{display:"flex",flexDirection:"row",alignItems:"baseline"}}>
                       <div className="SearchResult-count" style={{ marginRight:"15px" }}>

@@ -61,11 +61,11 @@ const LandingContent = () => {
                     </div>
                 </section>
             </div>
-            <div className="faq-container" id="FAQ">
+            {/* <div className="faq-container" id="FAQ">
                 <section className="faq">
                     <img style={{width:"53%"}}src={FAQ} alt="FAQ" />
                 </section>
-            </div>
+            </div> */}
             <div className='Landing-footer'>
             
                 <div className="footer-section contact-info">
