@@ -106,8 +106,27 @@ const SearchHeader = () => {
         });
     }
   };
+  const [isSticky, setIsSticky] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    const offset = window.pageYOffset;
+    if (offset > 100) { // Change 100 to whatever value fits your design
+      setIsSticky(true);
+    } else {
+      setIsSticky(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
   return (
     <>
+    
       <div className="Search-Nav">
         <div className="Search-Nav-Items">
           <a href="/">
