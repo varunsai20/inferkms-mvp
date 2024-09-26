@@ -23,17 +23,18 @@
   color: white;
   margin: 2% 2% 2% 2%;
   background: linear-gradient(
-    90deg,
-    rgba(254, 118, 117, 0.2) 0%,
-    rgba(204, 129, 185, 0.2) 34.2%,
-    rgba(26, 168, 210, 0.2) 68.81%,
-    rgba(76, 210, 217, 0.2) 100%
+90deg,
+rgba(254, 118, 117, 0.2) 0%,
+rgba(204, 129, 185, 0.2) 34.2%,
+rgba(26, 168, 210, 0.2) 68.81%,
+rgba(76, 210, 217, 0.2) 100%
   );
 }
 
 .Search-Nav-Items {
   display: flex;
   margin: 2%;
+  justify-content: space-between  ;
 }
 .Search-nav-logo {
   display: flex;
@@ -120,6 +121,69 @@
   background: linear-gradient(90deg, #f5f9ff 0%, #fff5fe 100%);
   display: flow;
 }
+.searchHeader-searchbar-outer{
+  width: 60%;
+  height: 13vh;
+  gap: 32px;
+  border-radius: 24px;
+  border: 1px solid #FFFFFF;
+  margin-top: 2%;
+  position: relative;
+  /* left: 20%; */
+  top: 10%;
+  margin-bottom: 2%;
+  background: rgba(250, 250, 250, 0.49);
+}
+
+#searchHeader-searchbar-box{
+  position: absolute;
+height: 7vh;
+width: 90%;
+margin: auto;
+left: 5%;
+top: 26%;
+/* background: #fff; */
+/* border: 1px solid black; */
+border-radius: 54px;
+display: flex;
+flex-direction: row;
+justify-content: flex-start;
+}
+/* Default styling for Search-Nav and searchbar */
+
+
+/* Sticky behavior when scrolling */
+.sticky-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  margin: 0;
+}
+
+.sticky-searchbar {
+  position: fixed;
+  top: 60px; /* Adjust depending on the height of your nav bar */
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  border: none;
+}
+
+/* 
+
+
+
+
+
+
+ */
+
+
 #searchbar-box {
   /* position: absolute; */
   height: 7vh;
@@ -173,7 +237,9 @@
   z-index: 1;
   color: black;
 }
-
+.icon{
+  top: 20%;
+}
 .searchHeader-autocomplete {
   /* position: absolute;  */
   /* left: 7.5%; */
@@ -218,3 +284,7 @@
 .searchLoader {
   margin-top: 15px;
 }
+
+
+
+

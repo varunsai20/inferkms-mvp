@@ -13,15 +13,57 @@ import Left1 from "../../../images/Left1.svg"
 import Left2 from "../../../images/Left1.svg"
 import Right1 from "../../../images/Right1.svg"
 import Right2 from "../../../images/Right2.svg"
-const faqData = [
-    { id: 1, number: '01', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
-    { id: 2, number: '02', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
-    { id: 3, number: '03', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
-    { id: 4, number: '04', question: 'Lorem Ipsum', answer: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.' },
-];
+const data = [
+    {
+      image: points1,
+      title: "AI-Driven Data Curation",
+      content:
+        "Data Integration: InfER can aggregate and analyze vast amounts of data from diverse sources, including scientific literature, clinical trials, and genomic databases, enabling researchers to access comprehensive information quickly.",
+    },
+    {
+      image: points2,
+      title: "Seamless Integration",
+      content:
+        "InfER easily connects with popular platforms, allowing real-time data sharing and automatic updates.",
+    },
+    {
+      image: points3,
+      title: "Advanced Analytics Engine",
+      content:
+        "InfER uses smart technology to provide insights through forecasts, live data displays, and in-depth analysis.",
+    },
+    {
+      image: points4,
+      title: "Collaborative Tools",
+      content:
+        "InfER’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.",
+    },
+  ];
 
 const LandingContent = () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % data.length);
+        }, 5000); // 3 seconds
+    
+        return () => clearInterval(interval); // Cleanup on unmount
+      }, []);
+    // Move to the next slide
+    const nextSlide = () => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % data.length);
+    };
+  
+    // Move to the previous slide
+    const prevSlide = () => {
+      setCurrentIndex((prevIndex) => (prevIndex - 1 + data.length) % data.length);
+    };
+    const goToSlide = (index) => {
+        setCurrentIndex(index);
+      };
     const [activeId, setActiveId] = useState(null);
+           
+
     const toggleFAQ = (id) => {
         setActiveId(activeId === id ? null : id); // Toggle open/close
     };
@@ -37,7 +79,7 @@ const LandingContent = () => {
           <img className="right2" src={Right2}/> */}
         
     
-        <div className='WhyInfer' id="WhyInfer">
+        {/* <div className='WhyInfer' id="WhyInfer">
                 <section className='WhyInfer-points'>
                     <div className="card">
                         <div className="number number-1"><img src={points1}/></div>
@@ -60,12 +102,56 @@ const LandingContent = () => {
                         <p className='card-content'><span className='infer'>InfER</span>’s Collaborative Tools make it easy for teams to share data, add comments, & give feedback in real time.</p>
                     </div>
                 </section>
+            </div> */}
+        <div className="carousel">
+            <div style={{width:"100%"}}>
+            <button className="carousel-button prev" onClick={prevSlide}>
+            &#10094;
+          </button>
+
+          {/* Slide Content */}
+          <div className="carousel-content">
+            {data.map((item, index) => (
+              <div
+                key={index}
+                className={`carousel-slide ${index === currentIndex ? 'active' : ''}`}
+                style={{ display: index === currentIndex ? 'block' : 'none' }}
+              >
+                <div className="card">
+                  <div className="number">
+                    <img src={item.image} alt={`Slide ${index + 1}`} />
+                  </div>
+                  <h3 className="card-title">{item.title}</h3>
+                  <p className="card-content">{item.content}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Next Button */}
+          <button className="carousel-button next" onClick={nextSlide}>
+            &#10095;
+          </button>
+
             </div>
-            <div className="faq-container" id="FAQ">
-                <section className="faq">
-                    <img style={{width:"53%"}}src={FAQ} alt="FAQ" />
-                </section>
-            </div>
+          <div>
+          <div className="carousel-indicators">
+            {data.map((_, index) => (
+              <span
+                key={index}
+                className={`indicator ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => goToSlide(index)}
+              ></span>
+            ))}
+          </div>
+          </div>
+          {/* Indicators */}
+          
+        </div>
+
+
+
+
             <div className='Landing-footer'>
             
                 <div className="footer-section contact-info">

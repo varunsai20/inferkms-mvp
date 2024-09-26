@@ -19,7 +19,7 @@ import notesicon from "../../../images/note-2.svg";
 import axios from "axios";
 const ITEMS_PER_PAGE = 5;
 
-const SearchContent = ({ open, onClose, applyFilters }) => {
+const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSelectedArticles, annotateData, setAnnotateData,openAnnotate,setOpenAnnotate }) => {
   const location = useLocation(); // Access the passed state
   const { data } = location.state || { data: [] };
   const searchTerm = location.state?.searchTerm || "";
@@ -27,6 +27,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const contentRightRef = useRef(null); // Ref for searchContent-right
   const [result, setResults] = useState();
   const [loading, setLoading] = useState();
+  // const [selectedArticles, setSelectedArticles] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [hoveredRow, setHoveredRow] = useState(null);
+
   //const [checkBoxLoading, setCheckBoxLoading] = useState(false);
   //const [isChecked, setIsChecked] = useState(false);
 
@@ -54,8 +58,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const [showTextAvailability, setShowTextAvailability] = useState(true);
   const [showArticleType, setShowArticleType] = useState(true);
   const [showPublicationDate, setShowPublicationDate] = useState(true);
-  const [openAnnotate, setOpenAnnotate] = useState(false);
+  
+  // const [annotateData,setAnnotateData]=useState()
   const [openNotes, setOpenNotes] = useState(false);
+  const [annotateLoading,setAnnotateLoading]=useState(false)
   const handleAnnotate = () => {
     if (openAnnotate) {
       setOpenAnnotate(false);
@@ -64,7 +70,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       setOpenNotes(false);
     }
   };
-  console.log(filters)
+  // console.log(filters)
   const handleNotes = () => {
     if (openNotes) {
       setOpenNotes(false);
@@ -78,7 +84,21 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     setShowFilterPopup(!showFilterPopup);
   };
 
-  console.log(filters);
+  // console.log(filters);
+  useEffect(() => {
+    if (annotateLoading) {
+      // Disable scrolling
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Enable scrolling
+      document.body.style.overflow = 'auto';
+    }
+
+    // Cleanup to reset the overflow when the component is unmounted or annotateLoading changes
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [annotateLoading]);
 
   const handleFilterChange = async (event) => {
     setLoading(true);
@@ -99,10 +119,13 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     // Making API request with the updated filters and search term when a filter changes
     handleButtonClick(updatedFilters);
   };
-
+  console.log(selectedArticles)
+  console.log(annotateData)
   const handleButtonClick = (updatedFilters) => {
+    
     //setCheckBoxLoading(true);
     setLoading(true);
+    
     if (searchTerm) {
       setLoading(true);
       sessionStorage.setItem("SearchTerm", searchTerm);
@@ -113,13 +136,12 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       }, 30000); // 30 seconds
 
       const filtersToSend = updatedFilters.articleType;
-      console.log(typeof(filtersToSend))
-      // Check the length of filtersToSend
+      
       const apiUrl =
         filtersToSend.length > 0
           ? "http://13.127.207.184:80/filter"
           : "http://13.127.207.184:80/query";
-      console.log(apiUrl);
+      // console.log(apiUrl);
       const requestBody =
         filtersToSend.length > 0
           ? {
@@ -129,15 +151,17 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
           : {
               query: searchTerm, // Send only the query if filters are empty
             };
-      console.log(requestBody);
+      // console.log(requestBody);
       axios
         .post(apiUrl, requestBody)
         .then((response) => {
-          console.log(response);
+          
+          // console.log(response);
           //setIsChecked((prev) => !prev);
           //localStorage.setItem("checkboxState", JSON.stringify(!isChecked));
           const data = response.data; // Assuming the API response contains the necessary data
           setResults(data);
+          setAnnotateData([])
           // Navigate to SearchPage and pass data via state
           navigate("/search", { state: { data, searchTerm } });
           clearTimeout(timeoutId);
@@ -157,18 +181,15 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     applyFilters(filters);
     setShowFilterPopup(false);
   };
-
+  useEffect(() => {
+    setSelectedArticles([]);
+    setAnnotateData([]);
+    setOpenAnnotate(false)
+  }, []);
   useEffect(() => {
     // Clear session storage for chatHistory when the location changes
     sessionStorage.removeItem("chatHistory");
   }, [location]);
-
-  // useEffect(() => {
-  //   // Scroll to the top of the searchContent-right container when the page changes
-  //   if (contentRightRef.current) {
-  //     contentRightRef.current.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // }, [currentPage]);
 
   // Function to italicize the search term in the text
   const italicizeTerm = (text) => {
@@ -209,8 +230,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // Calculate the index range for articles to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedArticles = data.articles.slice(startIndex, endIndex);
-  console.log(paginatedArticles);
+  const paginatedArticles = data.articles && data.articles.slice(startIndex, endIndex) || [];
+  // console.log(paginatedArticles);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -221,6 +242,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       
     }
   };
+  console.log(annotateData)
   useEffect(() => {
     // Reset currentPage to 1 whenever new search results are loaded
     setCurrentPage(1);
@@ -237,8 +259,202 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     };
   }, [loading]);
   // Calculate total pages
-  const totalPages = Math.ceil(data.articles.length / ITEMS_PER_PAGE);
-  console.log(data);
+  const totalPages = data.articles ? Math.ceil(data.articles.length / ITEMS_PER_PAGE) : 0;
+  // console.log(data);
+  const handleCheckboxChange = (pmid) => {
+    setSelectedArticles((prevSelected) =>
+      prevSelected.includes(pmid)
+        ? prevSelected.filter((id) => id !== pmid) // Remove unchecked article
+        : [...prevSelected, pmid] // Add checked article
+    );
+  };
+
+  // console.log(selectedArticles)
+  const handleAnnotateClick = async () => {
+    if (selectedArticles.length > 0) {
+      setAnnotateData([])
+      setAnnotateLoading(true);
+      axios.post('http://13.127.207.184:80/annotate', {
+        pmid: selectedArticles
+
+          , // Sending the selected PMIDs in the request body
+      })
+        .then((response) => {
+          console.log(response)
+          //setIsChecked((prev) => !prev);
+          //localStorage.setItem("checkboxState", JSON.stringify(!isChecked));
+          const data = response.data; 
+          // console.log(response)
+          setAnnotateData(data)
+          console.log(data)
+          console.log(data.length)
+          setOpenAnnotate(true)
+          // console.log(data)// Assuming the API response contains the necessary data
+          // setResults(data);
+          // Navigate to SearchPage and pass data via state
+          // navigate("/search", { state: { data, searchTerm } });
+          // clearTimeout(timeoutId);
+          // setLoading(false);
+          setAnnotateLoading(false);
+          console.log("executed")
+        })
+        .catch((error) => {
+          console.log(error);
+          // clearTimeout(timeoutId);
+          // setLoading(false);
+          // navigate("/search", { state: { data: [], searchTerm } });
+          console.error("Error fetching data from the API", error);
+        });
+        }
+        
+        
+        // Handle success response (e.g., show a success message or update the UI)
+      
+  };
+  const [expandedPmids, setExpandedPmids] = useState({}); // Track which PMIDs are expanded
+  const [expandedTexts, setExpandedTexts] = useState({});
+  useEffect(() => {
+    // Reset expandedTexts when openAnnotate changes
+    if (openAnnotate) {
+      setExpandedTexts({}); // Resets all expanded texts to the collapsed (sliced) state
+    }
+  }, [openAnnotate]);
+  // Function to toggle the expansion for all rows associated with a given PMID
+  const toggleExpandPmid = (pmid) => {
+    setExpandedPmids((prevState) => {
+      const isExpanding = !prevState[pmid]; // Determine if we are expanding or collapsing
+      if (!isExpanding) {
+        // If we are collapsing, reset the expanded texts for this PMID
+        const updatedTexts = { ...expandedTexts };
+        Object.keys(updatedTexts).forEach((key) => {
+          if (key.startsWith(`${pmid}-`)) {
+            delete updatedTexts[key]; // Remove expanded text for this PMID's rows
+          }
+        });
+        setExpandedTexts(updatedTexts); // Update expanded texts
+      }
+      return {
+        ...prevState,
+        [pmid]: isExpanding, // Toggle expansion for the specific PMID
+      };
+    });
+  };
+  
+  const toggleExpandText = (key) => {
+    setExpandedTexts((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key], // Toggle between full text and sliced text for a specific row
+    }));
+  };
+
+  const renderAnnotations = () => {
+    return annotateData.map((entry) =>
+      Object.entries(entry).flatMap(([pmid, types]) => {
+        const rows = [];
+        const isExpanded = expandedPmids[pmid];
+  
+        // Get the first available type from the types object
+        const sortedTypes = Object.entries(types)
+          .sort(([_, a], [__, b]) => (b.annotation_score || 0) - (a.annotation_score || 0)); // Sort by annotation_score in descending order
+  
+        const [firstType, firstTypeData] = sortedTypes[0] || [];
+        const annotationScore = firstTypeData ? `${firstTypeData.annotation_score.toFixed(2)}%` : '0%';
+  
+        const firstTypeValues = Object.entries(firstTypeData || {})
+          .filter(([key]) => key !== 'annotation_score')
+          .map(([key]) => key)
+          .join(', ');
+  
+        // Check if the text for this PMCID is expanded
+        const isFirstTypeExpanded = expandedTexts[`${pmid}-firstType`];
+  
+        // First row with expand button and either expanded or sliced data
+        rows.push(
+          <tr className="search-table-body" key={`${pmid}-first`}>
+            <td style={{paddingLeft:0}}>
+              <button onClick={() => toggleExpandPmid(pmid)} style={{paddingLeft:4}}>
+              {isExpanded ? '▼' : '▶'}  
+              </button>
+              <span style={{color:"#1a82ff",fontWeight:600}}>{pmid}</span>
+            </td>
+            <td>{annotationScore}</td>
+            <td>{firstType && firstType.length > 25 ? `${firstType.slice(0, 25)}` : firstType}</td>
+            <td>
+              {isFirstTypeExpanded
+                ? firstTypeValues // Show full data if expanded
+                : `${firstTypeValues.slice(0, 20)}`} {/* Show sliced data if not expanded */}
+              
+              {firstTypeValues.length > 30 && (
+                <span
+                  style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                  onClick={() => toggleExpandText(`${pmid}-firstType`)} // Toggle text expansion
+                >
+                  {isFirstTypeExpanded ? '' : '...'}
+                </span>
+              )}
+            </td>
+          </tr>
+        );
+  
+        // Collect all rows for each type, excluding the first type
+        const typeRows = sortedTypes.slice(1).map(([type, values]) => {
+            const valueEntries = Object.entries(values)
+              .filter(([key]) => key !== 'annotation_score')
+              .map(([key]) => `${key}`);
+  
+            const annotationScore = values.annotation_score
+              ? `${values.annotation_score.toFixed(2)}%`
+              : '0%';
+  
+            const valueText = valueEntries.join(', ');
+            const typeKey = `${pmid}-${type}`;
+            const isTypeTextExpanded = expandedTexts[typeKey];
+            const displayText = isTypeTextExpanded
+              ? valueText
+              : valueText.length > 30
+              ? `${valueText.slice(0, 20)}`
+              : valueText;
+  
+            return (
+              <tr className="search-table-body" key={typeKey}>
+                <td style={{ paddingLeft: '30px' }}></td> {/* Indentation for expanded rows */}
+                <td>{annotationScore}</td>
+                <td>{type.length > 25 ? `${type.slice(0, 25)}` : type}</td>
+                <td>
+                  {displayText}
+                  {valueText.length > 30 && !isTypeTextExpanded && (
+                    <span
+                      onClick={() => toggleExpandText(typeKey)}
+                      style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                    >
+                      ...
+                    </span>
+                  )}
+                </td>
+              </tr>
+            );
+          });
+  
+        // If expanded, show all rows except the first type
+        if (isExpanded) {
+          rows.push(...typeRows);
+        }
+  
+        return rows;
+      })
+    );
+  };
+
+  
+  
+  
+  
+  
+ 
+  
+  
+
+
   return (
     <>
       <Container maxWidth="xl" id="Search-Content-ContainerBox">
@@ -452,11 +668,37 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
               {data.articles && data.articles.length > 0 ? (
                 <>
                   <div className="SearchResult-Count-Filters">
-                    <div className="SearchResult-Option-Left">
-                      <button className="SearchResult-Save">Save</button>
-                      <button className="SearchResult-Email">Email</button>
-                      <button className="SearchResult-SendTo">Send to</button>
-                    </div>
+                  <div className="SearchResult-Option-Left"
+                   style={{
+                    cursor: selectedArticles.length > 0 ? 'pointer' : 'not-allowed',
+                    opacity: selectedArticles.length > 0 ? 1 : "", // Change opacity for a disabled effect
+                  }}
+                  >
+                  {annotateLoading ? (
+            <CircularProgress
+              background={"white"}
+              size={24}
+              style={{
+                border:"none",
+                marginLeft: "10px"
+
+              }}
+            />
+          ):(
+            <button
+                className={`SearchResult-Annotate ${selectedArticles.length > 0 ? "active" : "disabled"}`}
+                disabled={selectedArticles.length === 0}
+                onClick={selectedArticles.length > 0 ? handleAnnotateClick : null}
+                style={{
+                  cursor: selectedArticles.length > 0 ? 'pointer' : 'not-allowed',
+                  opacity: selectedArticles.length > 0 ? 1 : "", // Change opacity for a disabled effect
+                }}
+              >
+                Annotate
+              </button>
+          )}
+                      </div>
+
                     <div style={{display:"flex",flexDirection:"row",alignItems:"baseline"}}>
                       <div className="SearchResult-count" style={{ marginRight:"15px" }}>
                         <span style={{ color: "blue"}}>
@@ -472,9 +714,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                       <div style={{display:"flex",flexDirection:"row",alignItems:"baseline",gap:"5px"}}>
                         <span style={{color:"black", fontSize:"14px"}}>Sort by:</span>
                       <select className="SearchResult-dropdown">
+                      <option value="audi">Publication Date</option>
                       <option value="volvo">Best Match</option>
                         {/* <option value="mercedes">Sort by:Most Relevant</option> */}
-                        <option value="audi">Publication Date</option>
+                        
                         {/* <option value="saab">Abstarct</option> */}
                       </select>
                       </div>
@@ -488,10 +731,12 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                         <div key={index} className="searchresult-item ">
                           <div className="searchresult-item-header">
                             <h3 className="searchresult-title">
-                              <input
-                                type="checkbox"
-                                className="result-checkbox"
-                              />
+                            <input
+                                    type="checkbox"
+                                    className="result-checkbox"
+                                    onChange={() => handleCheckboxChange(result.pmid)}
+                                    checked={selectedArticles.includes(result.pmid)} // Sync checkbox state
+                                  />
                               <span
                                 className="gradient-text"
                                 onClick={() => handleNavigate(result.pmid)}
@@ -554,116 +799,54 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
           )}
           {loading?(""):(
             <>
+            
             <div className="search-right-aside">
-                          {openAnnotate && (
-                            <div className="search-annotate">
-                              <div className="search-tables">
-                                <p style={{ textAlign: "start" }}>Annotations</p>
-                                <div className="search-Annotate-tables">
-                                  <table>
-                                    <tr className="search-table-head">
-                                      <th>Type</th>
-                                      <th>Concept Id</th>
-                                      <th>Text</th>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>GENE</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylationv</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>GENE</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Desease</td>
-                                      <td>GENE:7164</td>
-                                      <td>Cancer</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>GENE</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Mutation</td>
-                                      <td>GENE:7164</td>
-                                      <td>Blood Cancer</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Desease</td>
-                                      <td>GENE:7164</td>
-                                      <td>Cancer</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Mutation</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Mutation</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Mutation</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                    <tr className="search-table-row">
-                                      <td>Mutation</td>
-                                      <td>GENE:7164</td>
-                                      <td>Acetylation</td>
-                                    </tr>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          {openNotes && (
-                            <div className="search-notes">
-                              <div
-                                className="search-notes-header"
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <p>Notes</p>
-                                <div style={{display:"flex",width: "50%",gap:"10px"}}>
-                                <button className="search-save-button"> Share</button>
-                                <button className="search-save-button"> save</button>
-                                </div>
-                              </div>
-                              <textarea
-                                className="search-note-taking"
-                                name=""
-                                id=""
-                                placeholder="Type something..."
-                              ></textarea>
-                            </div>
-                          )}
-                    <div className="search-icons-group">
-                      <div
-                        className={`search-annotate-icon ${
-                          openAnnotate ? "open" : "closed"
-                        }`}
-                        onClick={handleAnnotate}
-                      >
-                        <img src={annotate} alt="annotate-icon" />
-                      </div>
-                      <div
-                        className={`search-notes-icon ${openNotes ? "open" : "closed"}`}
-                        onClick={handleNotes}
-                      >
-                        <img src={notesicon} alt="notes-icon" />
-                      </div>
-                    </div>
-          </div>
-        
-        </>
+              {openAnnotate && (
+              <div className="search-annotate">
+                <div className="search-tables">
+                  <div style={{ padding: "3%",background:"#fff",borderRadius:"16px"
+                   }}>
+                  <p style={{ textAlign: "start" }}>Annotations</p>
+                  </div>
+                  <div className="search-Annotate-tables">
+                  
+                    <table>
+                      <thead>
+                        <tr className="search-table-head">
+                        <th style={{ width: '23%' }}>PMID</th>
+                        <th style={{ width: '12%' }}>Score</th>
+                        <th style={{ width: '20%' }}>Type</th>
+                        <th style={{ width: '40%' }}>Text</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {renderAnnotations()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
+              <div className="search-icons-group">
+              <div
+      className={`search-annotate-icon ${openAnnotate ? "open" : "closed"} ${annotateData && annotateData.length > 0 ? "" : "disabled"}`}
+      onClick={annotateData && annotateData.length > 0 ? handleAnnotate : null}
+      style={{
+        cursor: annotateData && annotateData.length > 0 ? 'pointer' : 'not-allowed',
+        opacity: annotateData && annotateData.length > 0 ? 1 : 1, // Adjust visibility when disabled
+      }}
+    >
+                  <img src={annotate} alt="annotate-icon" />
+                </div>
+              </div>
+            </div>
+
+                    
+          
+          
+            </>
           )}
          </div> 
         

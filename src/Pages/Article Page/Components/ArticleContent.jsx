@@ -494,55 +494,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
           )}
 
           <div className="right-aside">
-            {openAnnotate && (
-              <div className="annotate">
-                <div className="tables">
-                  <p style={{ textAlign: "start" }}>Annotations</p>
-                  <table>
-                    <tr className="table-head">
-                      <th>Type</th>
-                      <th>Concept Id</th>
-                      <th>Text</th>
-                    </tr>
-                    <tr className="table-row">
-                      <td>GENE</td>
-                      <td>GENE:7164</td>
-                      <td>Acetylationv</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>GENE</td>
-                      <td>GENE:7164</td>
-                      <td>Acetylation</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>Desease</td>
-                      <td>GENE:7164</td>
-                      <td>Cancer</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>GENE</td>
-                      <td>GENE:7164</td>
-                      <td>Acetylation</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>Mutation</td>
-                      <td>GENE:7164</td>
-                      <td>Blood Cancer</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>Desease</td>
-                      <td>GENE:7164</td>
-                      <td>Cancer</td>
-                    </tr>
-                    <tr className="table-row">
-                      <td>Mutation</td>
-                      <td>GENE:7164</td>
-                      <td>Acetylation</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            )}
+            
             {openNotes && (
               <div className="notes">
                 <div
@@ -568,15 +520,7 @@ const renderContentInOrder = (content, isAbstract = false) => {
               </div>
             )}
             <div className="icons-group">
-              <div
-                className={`annotate-icon ${openAnnotate ? "open" : "closed"}`}
-                onClick={() => {
-                  handleAnnotate();
-                  // handleResize();
-                }}
-              >
-                <img src={annotate} alt="annotate-icon" />
-              </div>
+              
               <div
                 className={`notes-icon ${openNotes ? "open" : "closed"}`}
                 onClick={() => {

@@ -11,7 +11,7 @@ import "./searchHeader.css";
 import terms from "../../../final_cleaned_terms_only.json";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-const SearchHeader = () => {
+const SearchHeader = ({ setSelectedArticles, setAnnotateData,setOpenAnnotate }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -48,6 +48,9 @@ const SearchHeader = () => {
   };
   console.log(localStorage.getItem("filters"))
   const handleButtonClick = () => {
+    setSelectedArticles([]);
+      setAnnotateData([]);
+      setOpenAnnotate(false)
     if (searchTerm) {
       setLoading(true);
       sessionStorage.setItem("SearchTerm", searchTerm);
@@ -106,8 +109,27 @@ const SearchHeader = () => {
         });
     }
   };
+  const [isSticky, setIsSticky] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    const offset = window.pageYOffset;
+    if (offset > 100) { // Change 100 to whatever value fits your design
+      setIsSticky(true);
+    } else {
+      setIsSticky(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
   return (
     <>
+    
       <div className="Search-Nav">
         <div className="Search-Nav-Items">
           <a href="/">
