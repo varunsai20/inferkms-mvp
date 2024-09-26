@@ -371,18 +371,18 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
         // First row with expand button and either expanded or sliced data
         rows.push(
           <tr className="search-table-body" key={`${pmid}-first`}>
-            <td>
-              <button onClick={() => toggleExpandPmid(pmid)}>
-              {isExpanded ? '▾' : '▸'}  
+            <td style={{paddingLeft:0}}>
+              <button onClick={() => toggleExpandPmid(pmid)} style={{paddingLeft:4}}>
+              {isExpanded ? '▼' : '▶'}  
               </button>
-              {pmid}
+              <span style={{color:"#1a82ff",fontWeight:600}}>{pmid}</span>
             </td>
             <td>{annotationScore}</td>
             <td>{firstType && firstType.length > 25 ? `${firstType.slice(0, 25)}` : firstType}</td>
             <td>
               {isFirstTypeExpanded
                 ? firstTypeValues // Show full data if expanded
-                : `${firstTypeValues.slice(0, 25)}`} {/* Show sliced data if not expanded */}
+                : `${firstTypeValues.slice(0, 20)}`} {/* Show sliced data if not expanded */}
               
               {firstTypeValues.length > 30 && (
                 <span
@@ -412,7 +412,7 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
             const displayText = isTypeTextExpanded
               ? valueText
               : valueText.length > 30
-              ? `${valueText.slice(0, 30)}`
+              ? `${valueText.slice(0, 20)}`
               : valueText;
   
             return (
@@ -668,27 +668,34 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
               {data.articles && data.articles.length > 0 ? (
                 <>
                   <div className="SearchResult-Count-Filters">
-                  <div className="SearchResult-Option-Left">
+                  <div className="SearchResult-Option-Left"
+                   style={{
+                    cursor: selectedArticles.length > 0 ? 'pointer' : 'not-allowed',
+                    opacity: selectedArticles.length > 0 ? 1 : "", // Change opacity for a disabled effect
+                  }}
+                  >
                   {annotateLoading ? (
             <CircularProgress
               background={"white"}
               size={24}
-              // style={{
-              //   position: "fixed",
-              //   // top: "50%",
-              //   left: "23%",
-              //   // transform: "translate(-50%,-50%)",
-              //   zIndex: "1",
-              // }}
+              style={{
+                border:"none",
+                marginLeft: "10px"
+
+              }}
             />
           ):(
             <button
-            className={`SearchResult-Annotate ${selectedArticles.length > 0 ? "active" : ""}`}
-            disabled={selectedArticles.length === 0}
-            onClick={handleAnnotateClick}
-          >
-            Annotate
-          </button>
+                className={`SearchResult-Annotate ${selectedArticles.length > 0 ? "active" : "disabled"}`}
+                disabled={selectedArticles.length === 0}
+                onClick={selectedArticles.length > 0 ? handleAnnotateClick : null}
+                style={{
+                  cursor: selectedArticles.length > 0 ? 'pointer' : 'not-allowed',
+                  opacity: selectedArticles.length > 0 ? 1 : "", // Change opacity for a disabled effect
+                }}
+              >
+                Annotate
+              </button>
           )}
                       </div>
 
@@ -707,9 +714,10 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
                       <div style={{display:"flex",flexDirection:"row",alignItems:"baseline",gap:"5px"}}>
                         <span style={{color:"black", fontSize:"14px"}}>Sort by:</span>
                       <select className="SearchResult-dropdown">
+                      <option value="audi">Publication Date</option>
                       <option value="volvo">Best Match</option>
                         {/* <option value="mercedes">Sort by:Most Relevant</option> */}
-                        <option value="audi">Publication Date</option>
+                        
                         {/* <option value="saab">Abstarct</option> */}
                       </select>
                       </div>
@@ -796,7 +804,10 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
               {openAnnotate && (
               <div className="search-annotate">
                 <div className="search-tables">
+                  <div style={{ padding: "3%",background:"#fff",borderRadius:"16px"
+                   }}>
                   <p style={{ textAlign: "start" }}>Annotations</p>
+                  </div>
                   <div className="search-Annotate-tables">
                   
                     <table>
@@ -806,8 +817,6 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
                         <th style={{ width: '12%' }}>Score</th>
                         <th style={{ width: '20%' }}>Type</th>
                         <th style={{ width: '40%' }}>Text</th>
-                        
-                          
                         </tr>
                       </thead>
                       <tbody>

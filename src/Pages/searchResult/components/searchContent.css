@@ -175,21 +175,22 @@ button{
   height: fit-content;
   gap: 8px;
   height: 5vh;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
   border-radius: 25px;
 }
 .SearchResult-Annotate {
   padding: 10px;
   gap: 10px;
   border-radius: 40px;
-  border: 1px;
+  border: 1px solid;
   opacity: 0px;
   color: rgba(26, 26, 26, 1);
   /* display: none; */
 }
+
 .SearchResult-Annotate {
   
-  opacity: 0.3;
+  /* opacity: 0.3; */
   pointer-events: none;
   /* transition: opacity 0.3s ease-in-out; */
 }
@@ -545,7 +546,7 @@ button{
   border-radius: 16px;
   margin: 0 5% 0 0;
   opacity: 0px;
-  border: 1px solid rgba(235, 235, 243, 1);
+  /* border: 1px solid rgba(235, 235, 243, 1); */
   background: #fbfbfd;
 }
 .search-notes {
@@ -605,6 +606,10 @@ button{
   border-radius: 8px;
   padding: 10px;
 }
+.search-tables{
+  border: 1px solid rgba(235, 235, 243, 1);
+  border-radius: 16px;
+}
 .search-tables p {
   font-family: Manrope;
   font-size: 14px;
@@ -612,7 +617,7 @@ button{
   line-height: 20px;
   text-align: left;
   color: black;
-  margin: 3% auto;
+  margin: 0 auto;
   width: fit-content; 
 }
 .search-Annotate-tables {
@@ -652,7 +657,7 @@ button{
   border-bottom: 2px solid #ddd;
 } */
 .search-table-body {
-
+  background:#fff;
   /* border-bottom: 2px solid #ddd; */
 }
 .flex-row{
@@ -662,7 +667,7 @@ button{
 button {
   background-color: transparent;
   border: none;
-  color: blue;
+  color: black;
   font-size: 16px;
   cursor: pointer;
 }
@@ -709,13 +714,20 @@ td {
   border-top: 1px solid #ddd;
 }
 .search-table-body td {
-  
+  border-radius:  0 0 0 16px;
   font-size: 12px;
   /* border-left: 1px solid #ddd; */
   border-top: 1px solid #ddd;
 }
 .search-table-row td {
   border-left: 1px solid #ddd;
+}
+.search-table-body:last-child td:first-child {
+  border-radius: 0 0 0 16px; /* Apply border-radius to the first td in the last row */
+}
+
+.search-table-body:last-child td:last-child {
+  border-radius: 0 0 16px 0; /* Apply border-radius to the last td in the last row */
 }
 .Landing-footer {
   background: linear-gradient(
