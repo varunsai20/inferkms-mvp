@@ -11,7 +11,7 @@ import "./searchHeader.css";
 import terms from "../../../final_cleaned_terms_only.json";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-const SearchHeader = () => {
+const SearchHeader = ({ setSelectedArticles, setAnnotateData,setOpenAnnotate }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -48,6 +48,9 @@ const SearchHeader = () => {
   };
   console.log(localStorage.getItem("filters"))
   const handleButtonClick = () => {
+    setSelectedArticles([]);
+      setAnnotateData([]);
+      setOpenAnnotate(false)
     if (searchTerm) {
       setLoading(true);
       sessionStorage.setItem("SearchTerm", searchTerm);

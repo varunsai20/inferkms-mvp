@@ -19,7 +19,7 @@ import notesicon from "../../../images/note-2.svg";
 import axios from "axios";
 const ITEMS_PER_PAGE = 5;
 
-const SearchContent = ({ open, onClose, applyFilters }) => {
+const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSelectedArticles, annotateData, setAnnotateData,openAnnotate,setOpenAnnotate }) => {
   const location = useLocation(); // Access the passed state
   const { data } = location.state || { data: [] };
   const searchTerm = location.state?.searchTerm || "";
@@ -27,7 +27,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const contentRightRef = useRef(null); // Ref for searchContent-right
   const [result, setResults] = useState();
   const [loading, setLoading] = useState();
-  const [selectedArticles, setSelectedArticles] = useState([]);
+  // const [selectedArticles, setSelectedArticles] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
 
@@ -58,8 +58,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   const [showTextAvailability, setShowTextAvailability] = useState(true);
   const [showArticleType, setShowArticleType] = useState(true);
   const [showPublicationDate, setShowPublicationDate] = useState(true);
-  const [openAnnotate, setOpenAnnotate] = useState(false);
-  const [annotateData,setAnnotateData]=useState()
+  
+  // const [annotateData,setAnnotateData]=useState()
   const [openNotes, setOpenNotes] = useState(false);
   const [annotateLoading,setAnnotateLoading]=useState(false)
   const handleAnnotate = () => {
@@ -119,10 +119,13 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     // Making API request with the updated filters and search term when a filter changes
     handleButtonClick(updatedFilters);
   };
-
+  console.log(selectedArticles)
+  console.log(annotateData)
   const handleButtonClick = (updatedFilters) => {
+    
     //setCheckBoxLoading(true);
     setLoading(true);
+    
     if (searchTerm) {
       setLoading(true);
       sessionStorage.setItem("SearchTerm", searchTerm);
@@ -133,8 +136,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       }, 30000); // 30 seconds
 
       const filtersToSend = updatedFilters.articleType;
-      // console.log(typeof(filtersToSend))
-      // Check the length of filtersToSend
+      
       const apiUrl =
         filtersToSend.length > 0
           ? "http://13.127.207.184:80/filter"
@@ -153,11 +155,13 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       axios
         .post(apiUrl, requestBody)
         .then((response) => {
+          
           // console.log(response);
           //setIsChecked((prev) => !prev);
           //localStorage.setItem("checkboxState", JSON.stringify(!isChecked));
           const data = response.data; // Assuming the API response contains the necessary data
           setResults(data);
+          setAnnotateData([])
           // Navigate to SearchPage and pass data via state
           navigate("/search", { state: { data, searchTerm } });
           clearTimeout(timeoutId);
@@ -177,7 +181,11 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     applyFilters(filters);
     setShowFilterPopup(false);
   };
-
+  useEffect(() => {
+    setSelectedArticles([]);
+    setAnnotateData([]);
+    setOpenAnnotate(false)
+  }, []);
   useEffect(() => {
     // Clear session storage for chatHistory when the location changes
     sessionStorage.removeItem("chatHistory");
@@ -222,7 +230,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   // Calculate the index range for articles to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedArticles = data.articles.slice(startIndex, endIndex);
+  const paginatedArticles = data.articles && data.articles.slice(startIndex, endIndex) || [];
   // console.log(paginatedArticles);
 
   // Handle page change
@@ -251,7 +259,7 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
     };
   }, [loading]);
   // Calculate total pages
-  const totalPages = Math.ceil(data.articles.length / ITEMS_PER_PAGE);
+  const totalPages = data.articles ? Math.ceil(data.articles.length / ITEMS_PER_PAGE) : 0;
   // console.log(data);
   const handleCheckboxChange = (pmid) => {
     setSelectedArticles((prevSelected) =>
@@ -267,16 +275,19 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       setAnnotateData([])
       setAnnotateLoading(true);
       axios.post('http://13.127.207.184:80/annotate', {
-        pmid: [19032575,34261083]
+        pmid: selectedArticles
+
           , // Sending the selected PMIDs in the request body
       })
         .then((response) => {
-          //  
+          console.log(response)
           //setIsChecked((prev) => !prev);
           //localStorage.setItem("checkboxState", JSON.stringify(!isChecked));
           const data = response.data; 
           // console.log(response)
           setAnnotateData(data)
+          console.log(data)
+          console.log(data.length)
           setOpenAnnotate(true)
           // console.log(data)// Assuming the API response contains the necessary data
           // setResults(data);
@@ -302,6 +313,12 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
   };
   const [expandedPmids, setExpandedPmids] = useState({}); // Track which PMIDs are expanded
   const [expandedTexts, setExpandedTexts] = useState({});
+  useEffect(() => {
+    // Reset expandedTexts when openAnnotate changes
+    if (openAnnotate) {
+      setExpandedTexts({}); // Resets all expanded texts to the collapsed (sliced) state
+    }
+  }, [openAnnotate]);
   // Function to toggle the expansion for all rows associated with a given PMID
   const toggleExpandPmid = (pmid) => {
     setExpandedPmids((prevState) => {
@@ -335,62 +352,60 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
       Object.entries(entry).flatMap(([pmid, types]) => {
         const rows = [];
         const isExpanded = expandedPmids[pmid];
-
-        // Collect all disease keys and their values into an array
-        let diseaseEntries = [];
-        let diseaseAnnotationScore = 0;
-
-        if (types.diseases) {
-          diseaseEntries = Object.entries(types.diseases)
-            .filter(([key]) => key !== 'annotation_score')
-            .map(([key]) => `${key}`);
-
-          // Extract annotation score if present for diseases
-          diseaseAnnotationScore = types.diseases.annotation_score
-            ? `${Math.round(types.diseases.annotation_score)}%`
-            : '0%'; // Default to 0% if not present
-        }
-
-        const diseaseValues = diseaseEntries.join(', ');
-        const diseaseKey = `${pmid}-diseases`;
-        const isDiseaseTextExpanded = expandedTexts[diseaseKey];
-        const diseaseText = isDiseaseTextExpanded
-          ? diseaseValues
-          : diseaseValues.length > 30
-          ? `${diseaseValues.slice(0, 30)}`
-          : diseaseValues;
-
-        const diseaseRow = (
-          <tr className="search-table-body" key={diseaseKey}>
-            <td>{pmid}</td>
-            <td>{diseaseAnnotationScore}</td>
-            <td>diseases</td>
+  
+        // Get the first available type from the types object
+        const sortedTypes = Object.entries(types)
+          .sort(([_, a], [__, b]) => (b.annotation_score || 0) - (a.annotation_score || 0)); // Sort by annotation_score in descending order
+  
+        const [firstType, firstTypeData] = sortedTypes[0] || [];
+        const annotationScore = firstTypeData ? `${firstTypeData.annotation_score.toFixed(2)}%` : '0%';
+  
+        const firstTypeValues = Object.entries(firstTypeData || {})
+          .filter(([key]) => key !== 'annotation_score')
+          .map(([key]) => key)
+          .join(', ');
+  
+        // Check if the text for this PMCID is expanded
+        const isFirstTypeExpanded = expandedTexts[`${pmid}-firstType`];
+  
+        // First row with expand button and either expanded or sliced data
+        rows.push(
+          <tr className="search-table-body" key={`${pmid}-first`}>
             <td>
-              {diseaseText}
-              {diseaseValues.length > 30 && !isDiseaseTextExpanded && (
+              <button onClick={() => toggleExpandPmid(pmid)}>
+              {isExpanded ? '▾' : '▸'}  
+              </button>
+              {pmid}
+            </td>
+            <td>{annotationScore}</td>
+            <td>{firstType && firstType.length > 25 ? `${firstType.slice(0, 25)}` : firstType}</td>
+            <td>
+              {isFirstTypeExpanded
+                ? firstTypeValues // Show full data if expanded
+                : `${firstTypeValues.slice(0, 25)}`} {/* Show sliced data if not expanded */}
+              
+              {firstTypeValues.length > 30 && (
                 <span
-                  onClick={() => toggleExpandText(diseaseKey)}
                   style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                  onClick={() => toggleExpandText(`${pmid}-firstType`)} // Toggle text expansion
                 >
-                  ...
+                  {isFirstTypeExpanded ? '' : '...'}
                 </span>
               )}
             </td>
           </tr>
         );
-
-        // Collect all other type rows (cellular, gene, etc.)
-        const otherTypeRows = Object.entries(types)
-          .filter(([type]) => type !== 'diseases')
-          .map(([type, values]) => {
+  
+        // Collect all rows for each type, excluding the first type
+        const typeRows = sortedTypes.slice(1).map(([type, values]) => {
             const valueEntries = Object.entries(values)
               .filter(([key]) => key !== 'annotation_score')
               .map(([key]) => `${key}`);
-
+  
             const annotationScore = values.annotation_score
-              ? `${Math.round(values.annotation_score)}%`
+              ? `${values.annotation_score.toFixed(2)}%`
               : '0%';
-
+  
             const valueText = valueEntries.join(', ');
             const typeKey = `${pmid}-${type}`;
             const isTypeTextExpanded = expandedTexts[typeKey];
@@ -399,12 +414,12 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
               : valueText.length > 30
               ? `${valueText.slice(0, 30)}`
               : valueText;
-
+  
             return (
               <tr className="search-table-body" key={typeKey}>
-                <td>{pmid}</td>
+                <td style={{ paddingLeft: '30px' }}></td> {/* Indentation for expanded rows */}
                 <td>{annotationScore}</td>
-                <td>{type}</td>
+                <td>{type.length > 25 ? `${type.slice(0, 25)}` : type}</td>
                 <td>
                   {displayText}
                   {valueText.length > 30 && !isTypeTextExpanded && (
@@ -419,58 +434,25 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
               </tr>
             );
           });
-
-        // Display only the first row and a "+" button if the rows are not expanded
-        if (!isExpanded) {
-          rows.push(
-            <tr className="search-table-body" key={`${pmid}-first`}>
-              <td>
-                <div className="flex-row">
-                  {pmid}
-                  <button onClick={() => toggleExpandPmid(pmid)} style={{ marginLeft: '10px' }}>
-                    +
-                  </button>
-                </div>
-              </td>
-              <td>{diseaseAnnotationScore}</td>
-              <td>diseases</td>
-              <td>
-                {diseaseText}
-                {diseaseValues.length > 30 && !isDiseaseTextExpanded && (
-                  <span
-                    onClick={() => toggleExpandText(diseaseKey)}
-                    style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
-                  >
-                    ...
-                  </span>
-                )}
-              </td>
-            </tr>
-          );
-        }
-
-        // If expanded, show all rows and a "-" button
+  
+        // If expanded, show all rows except the first type
         if (isExpanded) {
-          rows.push(
-            <tr className="search-table-body" key={`${pmid}-header`}>
-              <td>
-                <div className="flex-row">
-                  {pmid}
-                  <button onClick={() => toggleExpandPmid(pmid)} style={{ marginLeft: '10px' }}>
-                    -
-                  </button>
-                </div>
-              </td>
-              <td colSpan="3"></td>
-            </tr>
-          );
-          rows.push(diseaseRow, ...otherTypeRows);
+          rows.push(...typeRows);
         }
-
+  
         return rows;
       })
     );
   };
+
+  
+  
+  
+  
+  
+ 
+  
+  
 
 
   return (
@@ -809,9 +791,8 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
           )}
           {loading?(""):(
             <>
-            {annotateData?(
-              <>
-            {annotateLoading?(""):(<div className="search-right-aside">
+            
+            <div className="search-right-aside">
               {openAnnotate && (
               <div className="search-annotate">
                 <div className="search-tables">
@@ -821,10 +802,10 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
                     <table>
                       <thead>
                         <tr className="search-table-head">
-                        <th style={{ width: '15%' }}>PMID</th>
-                        <th style={{ width: '15%' }}>Score</th>
+                        <th style={{ width: '23%' }}>PMID</th>
+                        <th style={{ width: '12%' }}>Score</th>
                         <th style={{ width: '20%' }}>Type</th>
-                        <th style={{ width: '50%' }}>Text</th>
+                        <th style={{ width: '40%' }}>Text</th>
                         
                           
                         </tr>
@@ -840,19 +821,22 @@ const SearchContent = ({ open, onClose, applyFilters }) => {
 
 
               <div className="search-icons-group">
-                <div
-                  className={`search-annotate-icon ${openAnnotate ? "open" : "closed"}`}
-                  onClick={handleAnnotate}
-                >
+              <div
+      className={`search-annotate-icon ${openAnnotate ? "open" : "closed"} ${annotateData && annotateData.length > 0 ? "" : "disabled"}`}
+      onClick={annotateData && annotateData.length > 0 ? handleAnnotate : null}
+      style={{
+        cursor: annotateData && annotateData.length > 0 ? 'pointer' : 'not-allowed',
+        opacity: annotateData && annotateData.length > 0 ? 1 : 1, // Adjust visibility when disabled
+      }}
+    >
                   <img src={annotate} alt="annotate-icon" />
                 </div>
               </div>
             </div>
 
                     
-            )}
-            </>
-          ):("")}
+          
+          
             </>
           )}
          </div> 
