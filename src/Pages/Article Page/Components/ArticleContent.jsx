@@ -14,10 +14,13 @@ import rehypeRaw from 'rehype-raw';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import sendicon from "../../../images/sendicon.svg"
 import { faTelegram } from '@fortawesome/free-brands-svg-icons';
+import Annotation from "../Annotation";
 const ArticleContent = () => {
   const { pmid } = useParams();
   const location = useLocation();
   const { data } = location.state || { data: [] };
+  console.log(location.state.annotateData)
+  const annotateData=location.state.annotateData || { annotateData:[]}
   const [searchTerm,setSearchTerm]=useState("")
   const [articleData, setArticleData] = useState(null);
   const navigate = useNavigate();
@@ -494,7 +497,16 @@ const renderContentInOrder = (content, isAbstract = false) => {
           )}
 
           <div className="right-aside">
+          {openAnnotate && (
+              <div className="search-annotate">
+                
+                <Annotation 
+                    openAnnotate={openAnnotate} 
+                    annotateData={annotateData}
+                />
             
+              </div>
+            )}
             {openNotes && (
               <div className="notes">
                 <div
@@ -520,7 +532,16 @@ const renderContentInOrder = (content, isAbstract = false) => {
               </div>
             )}
             <div className="icons-group">
-              
+                <div
+                className={`search-annotate-icon ${openAnnotate ? "open" : "closed"} ${annotateData && annotateData.length > 0 ? "" : "disabled"}`}
+                onClick={annotateData && annotateData.length > 0 ? handleAnnotate : null}
+                style={{
+                  cursor: annotateData && annotateData.length > 0 ? 'pointer' : 'not-allowed',
+                  opacity: annotateData && annotateData.length > 0 ? 1 : 1, // Adjust visibility when disabled
+                }}
+              >
+                            <img src={annotate} alt="annotate-icon" />
+                          </div>
               <div
                 className={`notes-icon ${openNotes ? "open" : "closed"}`}
                 onClick={() => {
