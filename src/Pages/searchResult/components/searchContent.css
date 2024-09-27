@@ -667,8 +667,8 @@ button{
 button {
   background-color: transparent;
   border: none;
-  color: black;
-  font-size: 16px;
+  color: grey;
+  font-size: 13px;
   cursor: pointer;
 }
 /* Add border-left for each th element */

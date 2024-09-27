@@ -4,6 +4,7 @@ import { Container, Button, CircularProgress } from "@mui/material";
 import Logo from "../../../images/Frame 25.svg";
 import Message from "../../../images/Message.svg";
 import Location from "../../../images/Location.svg";
+import Annotation from "../../Article Page/Annotation";
 import {
   Dialog,
   Checkbox,
@@ -102,6 +103,9 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
 
   const handleFilterChange = async (event) => {
     setLoading(true);
+    setSelectedArticles([])
+    setAnnotateData([])
+    setOpenAnnotate(false)
     const newCheckedState = event.target.checked;
     //setIsChecked(newCheckedState);
     localStorage.setItem("checkboxState", JSON.stringify(newCheckedState)); // Save state to localStorage
@@ -217,7 +221,9 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
   const handleResetAll = () => {
     // Clear the filters from state
     setFilters({ articleType: [] });
-    
+    setAnnotateData([])
+    setSelectedArticles([])
+    setOpenAnnotate(false)
     // Clear the filters from localStorage
     localStorage.removeItem("filters");
     
@@ -225,7 +231,7 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
     handleButtonClick({ articleType: [] });
   };
   const handleNavigate = (pmid) => {
-    navigate(`/article/${pmid}`, { state: { data: data, searchTerm } });
+    navigate(`/article/${pmid}`, { state: { data: data, searchTerm,annotateData: annotateData } });
   };
   // Calculate the index range for articles to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -375,7 +381,7 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
               <button onClick={() => toggleExpandPmid(pmid)} style={{paddingLeft:4}}>
               {isExpanded ? '▼' : '▶'}  
               </button>
-              <span style={{color:"#1a82ff",fontWeight:600}}>{pmid}</span>
+              <a style={{color:"#1a82ff",fontWeight:600,cursor:"pointer"}} onClick={() => handleNavigate(pmid)}>{pmid}</a>
             </td>
             <td>{annotationScore}</td>
             <td>{firstType && firstType.length > 25 ? `${firstType.slice(0, 25)}` : firstType}</td>
@@ -444,15 +450,6 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
       })
     );
   };
-
-  
-  
-  
-  
-  
- 
-  
-  
 
 
   return (
@@ -803,28 +800,12 @@ const SearchContent = ({ open, onClose, applyFilters , selectedArticles, setSele
             <div className="search-right-aside">
               {openAnnotate && (
               <div className="search-annotate">
-                <div className="search-tables">
-                  <div style={{ padding: "3%",background:"#fff",borderRadius:"16px"
-                   }}>
-                  <p style={{ textAlign: "start" }}>Annotations</p>
-                  </div>
-                  <div className="search-Annotate-tables">
-                  
-                    <table>
-                      <thead>
-                        <tr className="search-table-head">
-                        <th style={{ width: '23%' }}>PMID</th>
-                        <th style={{ width: '12%' }}>Score</th>
-                        <th style={{ width: '20%' }}>Type</th>
-                        <th style={{ width: '40%' }}>Text</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {renderAnnotations()}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                
+                <Annotation 
+                    openAnnotate={openAnnotate} 
+                    annotateData={annotateData}
+                />
+            
               </div>
             )}
 

@@ -3,6 +3,7 @@ import {
   Autocomplete,
   TextField,
   Container,
+  InputAdornment,
   Box,
   Button,
   CircularProgress,
@@ -10,6 +11,7 @@ import {
 import "./searchHeader.css";
 import terms from "../../../final_cleaned_terms_only.json";
 import { useNavigate, useLocation } from "react-router-dom";
+import Searchbar from "../../Landing Page/Components/searchbar";
 import axios from "axios";
 const SearchHeader = ({ setSelectedArticles, setAnnotateData,setOpenAnnotate }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,9 +50,9 @@ const SearchHeader = ({ setSelectedArticles, setAnnotateData,setOpenAnnotate }) 
   };
   console.log(localStorage.getItem("filters"))
   const handleButtonClick = () => {
-    setSelectedArticles([]);
-      setAnnotateData([]);
-      setOpenAnnotate(false)
+    setSelectedArticles([])
+    setAnnotateData([])
+    setOpenAnnotate(false)
     if (searchTerm) {
       setLoading(true);
       sessionStorage.setItem("SearchTerm", searchTerm);
@@ -127,6 +129,10 @@ useEffect(() => {
     window.removeEventListener("scroll", handleScroll);
   };
 }, []);
+const handleClear = () => {
+  setSearchTerm(''); // Clear the input field
+  setFilteredResults([]);
+};
   return (
     <>
     
@@ -162,7 +168,10 @@ useEffect(() => {
         </div>
       </div>
       <div className='searchbar-outer' style={{left:"0",border:"1px solid grey",margin:"0"}}>
-                <Box id="LandinhHeader-searchbar-box" display="flex" justifyContent="center" width="100%">
+        <Searchbar setSelectedArticles={setSelectedArticles}
+        setAnnotateData={setAnnotateData}
+        setOpenAnnotate={setOpenAnnotate} />
+                {/* <Box id="LandinhHeader-searchbar-box" display="flex" justifyContent="center" width="100%">
                     <Autocomplete
                         freeSolo
                         options={filteredResults}
@@ -189,10 +198,23 @@ useEffect(() => {
                                         style: { padding: '8px 140px 8px 40px', borderRadius:"54px", background: "#fff",fontFamily: "Axiforma !important",
                                             fontSize: "16px !important",
                                             fontWeight: "500 !important" },
+                                            endAdornment: (
+                                              <InputAdornment position="end">
+                                                  {searchTerm && (
+                                                      <Button onClick={handleClear} >
+                                                         Clear
+                                                      </Button>
+                                                  )}
+                                                  <Button variant="contained" id="search-button" onClick={handleButtonClick} disabled={loading}>
+                                                      {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
+                                                  </Button>
+                                              </InputAdornment>
+                                          ),
                                     }}
                                     InputLabelProps={{
                                         style: { left: '30px' },
                                     }}
+                                    
                                 />
                                 <Button variant="contained" className="MuiButtonBase-root" id="search-button" onClick={handleButtonClick} style={{top:"11%"}} disabled={loading}>
                                 {loading ? <CircularProgress color={"white"} size={24} /> : 'Search'}
@@ -204,7 +226,7 @@ useEffect(() => {
                         className="autocomplete"
                     />
                                         
-                </Box>
+                </Box> */}
             </div>
       {/* <div className="searchHeader-container">
         <Box
